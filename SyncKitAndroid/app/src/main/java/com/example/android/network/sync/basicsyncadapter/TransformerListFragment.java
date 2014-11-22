@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.SyncStatusObserver;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -226,13 +227,28 @@ public class TransformerListFragment extends ListFragment
     private List<Transformer> buildData() {
 
         try {
-            JSONObject jso = new JSONObject(loadJSONFromAsset());
+
+            List<Transformer> posts = new ArrayList<Transformer>();
+
+            final ContentResolver contentResolver = getActivity().getContentResolver();
+
+            Cursor c = null;
+
+            Uri uri = Transformer.CONTENT_URI; // Get all entries
+            c = contentResolver.query(uri, null, null, null, null);
+
+            while (c.moveToNext()) {
+
+                Transformer transformer = new Transformer(c.getString(2),c.getString(3));
+                posts.add(transformer);
+            }
+
+            /*JSONObject jso = new JSONObject(loadJSONFromAsset());
             JSONArray ja = jso.getJSONArray("results");
 
             GsonBuilder gsonBuilder = new GsonBuilder();
             gsonBuilder.setDateFormat("M/d/yy hh:mm a");
             Gson gson = gsonBuilder.create();
-            List<Transformer> posts = new ArrayList<Transformer>();
 
             posts = Arrays.asList(gson.fromJson(ja.toString(), Transformer[].class));
 
@@ -240,7 +256,7 @@ public class TransformerListFragment extends ListFragment
             list.add(putData("boiler"));
             list.add(putData("pipe"));
             list.add(putData("transformer"));
-            list.add(putData("turbine"));
+            list.add(putData("turbine"));*/
 
             return posts;
         }
@@ -446,9 +462,9 @@ public class TransformerListFragment extends ListFragment
                     // Test the ContentResolver to see if the sync adapter is active or pending.
                     // Set the state of the refresh button accordingly.
                     boolean syncActive = ContentResolver.isSyncActive(
-                            account, FeedContract.CONTENT_AUTHORITY);
+                            account, Transformer.CONTENT_AUTHORITY);
                     boolean syncPending = ContentResolver.isSyncPending(
-                            account, FeedContract.CONTENT_AUTHORITY);
+                            account, Transformer.CONTENT_AUTHORITY);
                     setRefreshActionButtonState(syncActive || syncPending);
                 }
             });

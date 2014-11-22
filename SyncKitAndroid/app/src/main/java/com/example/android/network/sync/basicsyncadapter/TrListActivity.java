@@ -1,5 +1,8 @@
 package com.example.android.network.sync.basicsyncadapter;
 
+import android.content.ContentResolver;
+import android.database.Cursor;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,34 +43,48 @@ public class TrListActivity extends ActionBarActivity {
 
     private List<Transformer> buildData() {
 
-        List<Transformer> transformers = new ArrayList<Transformer>();
-
         try {
-            JSONObject jso = new JSONObject(loadJSONFromAsset());
+
+            List<Transformer> posts = new ArrayList<Transformer>();
+
+            final ContentResolver contentResolver =this.getContentResolver();
+
+            Cursor c = null;
+
+            Uri uri = Transformer.CONTENT_URI; // Get all entries
+            c = contentResolver.query(uri, null, null, null, null);
+
+            while (c.moveToNext()) {
+
+                Transformer transformer = new Transformer(c.getString(2),c.getString(3));
+                posts.add(transformer);
+            }
+
+            /*JSONObject jso = new JSONObject(loadJSONFromAsset());
             JSONArray ja = jso.getJSONArray("results");
 
-
-            /*GsonBuilder gsonBuilder = new GsonBuilder();
+            GsonBuilder gsonBuilder = new GsonBuilder();
             gsonBuilder.setDateFormat("M/d/yy hh:mm a");
-            Gson gson = gsonBuilder.create();*/
-            //posts = Arrays.asList(gson.fromJson(ja.toString(), Transformer[].class));
+            Gson gson = gsonBuilder.create();
 
-            for( int i = 0; i < ja.length(); i++ ) {
-                //Transformer transformerObject = new Transformer();
-                transformers.add(new Transformer(ja.getJSONObject(i).getString("transformerNickName"), ja.getJSONObject(i).getString("transformerLocation")));
-                //transformerObject.trsName = entry.getString("transformerNickName");
-                //transformerObject.trsLocation = entry.getString("transformerLocation");
-                //posts.add(transformerObject);
-                //DO STUFF
-            }
+            posts = Arrays.asList(gson.fromJson(ja.toString(), Transformer[].class));
+
+            ArrayList<Map<String, String>> list = new ArrayList<Map<String, String>>();
+            list.add(putData("boiler"));
+            list.add(putData("pipe"));
+            list.add(putData("transformer"));
+            list.add(putData("turbine"));*/
+
+            return posts;
         }
         catch (Exception Ex)
         {
-            Log.e("Machi Crash Log", "Failed to parse JSON due to: " + Ex);
+
         }
 
-        return transformers;
+        return null;
     }
+
 
     public String loadJSONFromAsset() {
         String json = null;
