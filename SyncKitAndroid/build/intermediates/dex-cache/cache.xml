@@ -8,12 +8,6 @@
         revision="19.1.0"
         sha1="1a578b9607b36266c63d43a4fa0ab5664dbe911e"/>
     <item
-        dex="/Users/aceldesign/Desktop/Satheesh/MS Project/Kav/Androidbits_Demo/SyncKitAndroid/app/build/intermediates/pre-dexed/debug/classes-9877e804093c9f6bd19b2f74a42cfd520a424696.jar"
-        jar="/Users/aceldesign/Desktop/Satheesh/MS Project/Kav/Androidbits_Demo/SyncKitAndroid/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/20.0.0/classes.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="f21927d22fe31889ecce94dd697a2e75b137e0ef"/>
-    <item
         dex="/Users/aceldesign/Downloads/SyncKitAndroid/app/build/intermediates/pre-dexed/debug/classes-720fe57d7a8957b7848505a66a404212a3595835.jar"
         jar="/Users/aceldesign/Downloads/SyncKitAndroid/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/20.0.0/classes.jar"
         jumboMode="false"
@@ -28,18 +22,6 @@
     <item
         dex="/Users/aceldesign/Downloads/SyncKitAndroid/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.0-cc0473c7819c91d7f0000f1d3d5b0aa23a871712.jar"
         jar="/Users/aceldesign/Downloads/SyncKitAndroid/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/libs/internal_impl-21.0.0.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0"/>
-    <item
-        dex="/Users/aceldesign/Desktop/Satheesh/MS Project/Kav/Androidbits_Demo/SyncKitAndroid/app/build/intermediates/pre-dexed/debug/classes-eada64b2daa90b6e28bed63a9f5d7a920b910543.jar"
-        jar="/Users/aceldesign/Desktop/Satheesh/MS Project/Kav/Androidbits_Demo/SyncKitAndroid/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/classes.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="686344a780033e4ba22b926cd225f8d4941247e6"/>
-    <item
-        dex="/Users/aceldesign/Desktop/Satheesh/MS Project/Kav/Androidbits_Demo/SyncKitAndroid/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.0-16c54b6c7585fce3f292c37bf7e5ffb057a21c9f.jar"
-        jar="/Users/aceldesign/Desktop/Satheesh/MS Project/Kav/Androidbits_Demo/SyncKitAndroid/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/libs/internal_impl-21.0.0.jar"
         jumboMode="false"
         revision="19.1.0"
         sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0"/>

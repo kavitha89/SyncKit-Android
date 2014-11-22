@@ -70,7 +70,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
      * <p>This points to the Android Developers Blog. (Side note: We highly recommend reading the
      * Android Developer Blog to stay up to date on the latest Android platform developments!)
      */
-    private static final String FEED_URL = "https://api.parse.com/1/classes/Transformer";
+    private static final String FEED_URL = "https://api.parse.com/1/classes/News";
 
     /**
      * Network connection timeout, in milliseconds.
@@ -331,8 +331,8 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
      */
     private InputStream downloadUrl(final URL url) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestProperty("X-Parse-Application-Id","TsEDR12ICJtD59JM92WslVurN0wh5JPuznKvroRc");
-        conn.setRequestProperty("X-Parse-REST-API-Key","4LC6oFNCyqLMFHSdPIPsxJoXHY6gTHGMG2kUcbwB");
+        conn.setRequestProperty("X-Parse-Application-Id","KQXPGZ1eO7Kk08PHhitRlKDzSVYVgOn1tQ3w9BV3");
+        conn.setRequestProperty("X-Parse-REST-API-Key","HwEiZiHbopGNxdMPTMIQlIA4iu2vt68sHnaVErFH");
         conn.setReadTimeout(NET_READ_TIMEOUT_MILLIS /* milliseconds */);
         conn.setConnectTimeout(NET_CONNECT_TIMEOUT_MILLIS /* milliseconds */);
         conn.setRequestMethod("GET");
