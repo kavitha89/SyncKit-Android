@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/Users/aceldesign/Downloads/SyncKitAndroid/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/20.0.0/res/values/values.xml -->
+    <!-- From: file:/Users/aceldesign/Desktop/Satheesh/MS%20Project/Kav/Androidbits_Demo/SyncKitAndroid/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/20.0.0/res/values/values.xml -->
     <eat-comment/>
     <attr format="reference" name="actionBarDivider"/>
     <attr format="reference" name="actionBarItemBackground"/>
@@ -107,23 +107,23 @@
     <dimen name="abc_panel_menu_list_width">296dp</dimen>
     <dimen name="abc_search_view_preferred_width">320dip</dimen>
     <dimen name="abc_search_view_text_min_width">160dip</dimen>
-    <!-- From: file:/Users/aceldesign/Downloads/SyncKitAndroid/app/src/main/res/values/dimen.xml -->
+    <!-- From: file:/Users/aceldesign/Desktop/Satheesh/MS%20Project/Kav/Androidbits_Demo/SyncKitAndroid/app/src/main/res/values/dimen.xml -->
     <eat-comment/>
     <dimen name="action_button_min_width">56dp</dimen>
-    <!-- From: file:/Users/aceldesign/Downloads/SyncKitAndroid/app/src/main/res/values/dimens.xml -->
+    <!-- From: file:/Users/aceldesign/Desktop/Satheesh/MS%20Project/Kav/Androidbits_Demo/SyncKitAndroid/app/src/main/res/values/dimens.xml -->
     <eat-comment/>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <!-- From: file:/Users/aceldesign/Downloads/SyncKitAndroid/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/20.0.0/res/values/values.xml -->
+    <!-- From: file:/Users/aceldesign/Desktop/Satheesh/MS%20Project/Kav/Androidbits_Demo/SyncKitAndroid/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/20.0.0/res/values/values.xml -->
     <eat-comment/>
     <item name="dialog_fixed_height_major" type="dimen">80%</item>
     <item name="dialog_fixed_height_minor" type="dimen">100%</item>
     <item name="dialog_fixed_width_major" type="dimen">320dp</item>
     <item name="dialog_fixed_width_minor" type="dimen">320dp</item>
-    <!-- From: file:/Users/aceldesign/Downloads/SyncKitAndroid/app/src/main/res/values/dimen.xml -->
+    <!-- From: file:/Users/aceldesign/Desktop/Satheesh/MS%20Project/Kav/Androidbits_Demo/SyncKitAndroid/app/src/main/res/values/dimen.xml -->
     <eat-comment/>
     <dimen name="indeterminate_progress_size">32dp</dimen>
-    <!-- From: file:/Users/aceldesign/Downloads/SyncKitAndroid/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/20.0.0/res/values/values.xml -->
+    <!-- From: file:/Users/aceldesign/Desktop/Satheesh/MS%20Project/Kav/Androidbits_Demo/SyncKitAndroid/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/20.0.0/res/values/values.xml -->
     <eat-comment/>
     <item name="action_bar_activity_content" type="id"/>
     <item name="action_menu_divider" type="id"/>
@@ -145,7 +145,7 @@
     <string name="abc_searchview_description_voice">Voice search</string>
     <string name="abc_shareactionprovider_share_with">Share with</string>
     <string name="abc_shareactionprovider_share_with_application">Share with %s</string>
-    <!-- From: file:/Users/aceldesign/Downloads/SyncKitAndroid/app/src/main/res/values/strings.xml -->
+    <!-- From: file:/Users/aceldesign/Desktop/Satheesh/MS%20Project/Kav/Androidbits_Demo/SyncKitAndroid/app/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="account_name">SyncKit</string>
     <string name="action_settings">Settings</string>
@@ -161,7 +161,7 @@
     <string name="title_activity_turbine_list">TurbineListActivity</string>
     <string name="title_entry_detail">Entry Detail</string>
     <string name="transformer_list_activity">TransformerListActivity</string>
-    <!-- From: file:/Users/aceldesign/Downloads/SyncKitAndroid/app/src/main/res/values/styles.xml -->
+    <!-- From: file:/Users/aceldesign/Desktop/Satheesh/MS%20Project/Kav/Androidbits_Demo/SyncKitAndroid/app/src/main/res/values/styles.xml -->
     <eat-comment/>
     <style name="AppBaseTheme" parent="android:Theme.Light">
         <!--
@@ -173,7 +173,7 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-    <!-- From: file:/Users/aceldesign/Downloads/SyncKitAndroid/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/20.0.0/res/values/values.xml -->
+    <!-- From: file:/Users/aceldesign/Desktop/Satheesh/MS%20Project/Kav/Androidbits_Demo/SyncKitAndroid/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/20.0.0/res/values/values.xml -->
     <eat-comment/>
     <style name="TextAppearance.AppCompat.Base.CompactMenu.Dialog" parent="android:TextAppearance.Medium">
         <item name="android:textColor">@android:color/primary_text_light</item>
