@@ -41,6 +41,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.example.android.network.sync.basicsyncadapter.accounts.GenericAccountService;
+import com.example.android.network.sync.basicsyncadapter.models.Transformer;
 import com.example.android.network.sync.basicsyncadapter.provider.FeedContract;
 
 import java.util.ArrayList;
@@ -240,12 +241,13 @@ public class ModelSelectionFragment extends ListFragment
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         // We only have one loader, so we can ignore the value of i.
         // (It'll be '0', as set in onCreate().)
+
         return new CursorLoader(getActivity(),  // Context
-                FeedContract.Entry.CONTENT_URI, // URI
-                PROJECTION,                // Projection
+                Transformer.CONTENT_URI,
+                null,// URI
                 null,                           // Selection
                 null,                           // Selection args
-                FeedContract.Entry.COLUMN_NAME_PUBLISHED + " desc"); // Sort
+                null);
     }
 
     /**
@@ -390,9 +392,9 @@ public class ModelSelectionFragment extends ListFragment
                     // Test the ContentResolver to see if the sync adapter is active or pending.
                     // Set the state of the refresh button accordingly.
                     boolean syncActive = ContentResolver.isSyncActive(
-                            account, FeedContract.CONTENT_AUTHORITY);
+                            account, Transformer.CONTENT_AUTHORITY);
                     boolean syncPending = ContentResolver.isSyncPending(
-                            account, FeedContract.CONTENT_AUTHORITY);
+                            account, Transformer.CONTENT_AUTHORITY);
                     setRefreshActionButtonState(syncActive || syncPending);
                 }
             });

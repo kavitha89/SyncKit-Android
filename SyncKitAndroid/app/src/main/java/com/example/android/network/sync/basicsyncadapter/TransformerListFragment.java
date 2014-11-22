@@ -101,10 +101,19 @@ public class TransformerListFragment extends ListFragment
      * Projection for querying the content provider.
      */
     private static final String[] PROJECTION = new String[]{
-            FeedContract.Entry._ID,
-            FeedContract.Entry.COLUMN_NAME_TITLE,
-            FeedContract.Entry.COLUMN_NAME_LINK,
-            FeedContract.Entry.COLUMN_NAME_PUBLISHED
+            Transformer.KEY_TRANSFORMER_ID,
+            Transformer.KEY_NAME,
+            Transformer.KEY_LOCATION,
+            Transformer.KEY_MAKE,
+            Transformer.KEY_CURRENT_TEMP,
+            Transformer.KEY_OIL_LEVEL,
+            Transformer.KEY_OPERATING_POWER,
+            Transformer.KEY_WINDING_COUNT,
+            Transformer.KEY_WINDING_MAKE,
+            Transformer.KEY_TYPE,
+            Transformer.KEY_LAST_UPDATED_TIME,
+            Transformer.KEY_LAST_SERVER_SYNC_DATE,
+            Transformer.KEY_SYNC_STATUS
     };
 
     // Column indexes. The index of a column in the Cursor is the same as its relative position in
@@ -306,7 +315,7 @@ public class TransformerListFragment extends ListFragment
         // We only have one loader, so we can ignore the value of i.
         // (It'll be '0', as set in onCreate().)
         return new CursorLoader(getActivity(),  // Context
-                FeedContract.Entry.CONTENT_URI, // URI
+                Transformer.CONTENT_URI, // URI
                 PROJECTION,                // Projection
                 null,                           // Selection
                 null,                           // Selection args

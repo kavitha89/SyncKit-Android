@@ -41,7 +41,7 @@ public class FeedContract {
     /**
      * Path component for "entry"-type resources..
      */
-    private static final String PATH_ENTRIES = "entries";
+    private static final String PATH_ENTRIES = "results";
 
     /**
      * Columns supported by "entries" records.
@@ -51,7 +51,7 @@ public class FeedContract {
          * MIME type for lists of entries.
          */
         public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.basicsyncadapter.entries";
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.basicsyncadapter.results";
         /**
          * MIME type for individual entries.
          */
@@ -67,7 +67,7 @@ public class FeedContract {
         /**
          * Table name where records are stored for "entry" resources.
          */
-        public static final String TABLE_NAME = "entry";
+        public static final String TABLE_NAME = "Transformers";
         /**
          * Atom ID. (Note: Not to be confused with the database primary key, which is _ID.
          */

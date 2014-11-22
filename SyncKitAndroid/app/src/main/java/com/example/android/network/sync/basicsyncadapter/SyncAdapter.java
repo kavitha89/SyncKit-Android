@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.example.android.network.sync.basicsyncadapter.models.Boiler;
 import com.example.android.network.sync.basicsyncadapter.models.Transformer;
 import com.example.android.network.sync.basicsyncadapter.net.FeedParser;
 import com.example.android.network.sync.basicsyncadapter.provider.FeedContract;
@@ -51,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Define a sync adapter for the app.
@@ -70,7 +72,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
      * <p>This points to the Android Developers Blog. (Side note: We highly recommend reading the
      * Android Developer Blog to stay up to date on the latest Android platform developments!)
      */
-    private static final String FEED_URL = "https://api.parse.com/1/classes/News";
+    private static final String FEED_URL = "https://api.parse.com/1/classes/Transformer";
 
     /**
      * Network connection timeout, in milliseconds.
@@ -149,7 +151,8 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
                 updateLocalFeedData(stream, syncResult);
                 // Makes sure that the InputStream is closed after the app is
                 // finished using it.
-            } finally {
+            }
+            finally {
                 if (stream != null) {
                     stream.close();
                 }
@@ -206,87 +209,66 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
             throws IOException, XmlPullParserException, RemoteException,
             OperationApplicationException, ParseException {
 
-        try
-        {
 
-            StringBuilder builder = new StringBuilder();
-            BufferedReader b_reader = new BufferedReader(new InputStreamReader(stream));
-            String line;
-            while((line = b_reader.readLine()) != null) {
-                builder.append(line);
-                System.out.println(line);
-            }
-
-            JSONObject jso = new JSONObject(builder.toString());
-            JSONArray ja = jso.getJSONArray("results");
-
-            GsonBuilder gsonBuilder = new GsonBuilder();
-            gsonBuilder.setDateFormat("M/d/yy hh:mm a");
-            Gson gson = gsonBuilder.create();
-            List<Transformer> posts = new ArrayList<Transformer>();
-
-            posts = Arrays.asList(gson.fromJson(ja.toString(), Transformer[].class));
-            Log.i(TAG,"posts: " + posts.toString());
-        }
-        catch (Exception ex) {
-            Log.e(TAG, "Failed to parse JSON due to: " + ex);
-            //failedLoadingPosts();
-        }
 
         final FeedParser feedParser = new FeedParser();
         final ContentResolver contentResolver = getContext().getContentResolver();
 
         Log.i(TAG, "Parsing stream as Atom feed");
-        final List<FeedParser.Entry> entries = feedParser.parse(stream);
+        final List<Transformer> entries = this.parseTransformersResponse(stream);
+        ;
         Log.i(TAG, "Parsing complete. Found " + entries.size() + " entries");
-
-
 
 
         ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>();
 
         // Build hash table of incoming entries
-        HashMap<String, FeedParser.Entry> entryMap = new HashMap<String, FeedParser.Entry>();
-        for (FeedParser.Entry e : entries) {
-            entryMap.put(e.id, e);
+        HashMap<String, Transformer> entryMap = new HashMap<String, Transformer>();
+        for (Transformer e : entries) {
+            entryMap.put(e.transformerID, e);
+        }
+        Cursor c = null;
+
+        try {
+
+            // Get list of all items
+            Log.i(TAG, "Fetching local entries for merge");
+            Uri uri = Transformer.CONTENT_URI; // Get all entries
+            c = contentResolver.query(uri, null, null, null, null);
+            assert c != null;
+            Log.i(TAG, "Found " + c.getCount() + " local entries. Computing merge solution...");
         }
 
-        // Get list of all items
-        Log.i(TAG, "Fetching local entries for merge");
-        Uri uri = FeedContract.Entry.CONTENT_URI; // Get all entries
-        Cursor c = contentResolver.query(uri, PROJECTION, null, null, null);
-        assert c != null;
-        Log.i(TAG, "Found " + c.getCount() + " local entries. Computing merge solution...");
+        catch (Exception ex)
+        {
 
+        }
         // Find stale data
-        int id;
-        String entryId;
-        String title;
-        String link;
-        long published;
+        String id;
+        String name;
+        String location;
+
         while (c.moveToNext()) {
             syncResult.stats.numEntries++;
-            id = c.getInt(COLUMN_ID);
-            entryId = c.getString(COLUMN_ENTRY_ID);
-            title = c.getString(COLUMN_TITLE);
-            link = c.getString(COLUMN_LINK);
-            published = c.getLong(COLUMN_PUBLISHED);
-            FeedParser.Entry match = entryMap.get(entryId);
+
+            id = c.getColumnName(COLUMN_ID);
+            name = c.getString(COLUMN_ENTRY_ID);
+            location = c.getString(COLUMN_TITLE);
+
+            Transformer match = entryMap.get(id);
             if (match != null) {
                 // Entry exists. Remove from entry map to prevent insert later.
-                entryMap.remove(entryId);
+                entryMap.remove(id);
                 // Check to see if the entry needs to be updated
-                Uri existingUri = FeedContract.Entry.CONTENT_URI.buildUpon()
-                        .appendPath(Integer.toString(id)).build();
-                if ((match.title != null && !match.title.equals(title)) ||
-                        (match.link != null && !match.link.equals(link)) ||
-                        (match.published != published)) {
+                Uri existingUri = Transformer.CONTENT_URI.buildUpon()
+                        .appendPath(id).build();
+                if ((match.trsName != null && !match.trsLocation.equals(name))) {
                     // Update existing record
                     Log.i(TAG, "Scheduling update: " + existingUri);
                     batch.add(ContentProviderOperation.newUpdate(existingUri)
-                            .withValue(FeedContract.Entry.COLUMN_NAME_TITLE, title)
-                            .withValue(FeedContract.Entry.COLUMN_NAME_LINK, link)
-                            .withValue(FeedContract.Entry.COLUMN_NAME_PUBLISHED, published)
+                            .withValue(Transformer.KEY_NAME, name)
+                            .withValue(Transformer.KEY_LOCATION, location)
+                            .withValue(Transformer.KEY_TRANSFORMER_ID, id)
                             .build());
                     syncResult.stats.numUpdates++;
                 } else {
@@ -294,8 +276,8 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
                 }
             } else {
                 // Entry doesn't exist. Remove it from the database.
-                Uri deleteUri = FeedContract.Entry.CONTENT_URI.buildUpon()
-                        .appendPath(Integer.toString(id)).build();
+                Uri deleteUri = Transformer.CONTENT_URI.buildUpon()
+                        .appendPath(id).build();
                 Log.i(TAG, "Scheduling delete: " + deleteUri);
                 batch.add(ContentProviderOperation.newDelete(deleteUri).build());
                 syncResult.stats.numDeletes++;
@@ -304,20 +286,19 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
         c.close();
 
         // Add new items
-        for (FeedParser.Entry e : entryMap.values()) {
-            Log.i(TAG, "Scheduling insert: entry_id=" + e.id);
-            batch.add(ContentProviderOperation.newInsert(FeedContract.Entry.CONTENT_URI)
-                    .withValue(FeedContract.Entry.COLUMN_NAME_ENTRY_ID, e.id)
-                    .withValue(FeedContract.Entry.COLUMN_NAME_TITLE, e.title)
-                    .withValue(FeedContract.Entry.COLUMN_NAME_LINK, e.link)
-                    .withValue(FeedContract.Entry.COLUMN_NAME_PUBLISHED, e.published)
+        for (Transformer e : entryMap.values()) {
+            Log.i(TAG, "Scheduling insert: entry_id=" + e.transformerID);
+            batch.add(ContentProviderOperation.newInsert(Transformer.CONTENT_URI)
+                    .withValue(Transformer.KEY_TRANSFORMER_ID, e.transformerID)
+                    .withValue(Transformer.KEY_NAME, e.trsName)
+                    .withValue(Transformer.KEY_LOCATION, e.trsLocation)
                     .build());
             syncResult.stats.numInserts++;
         }
         Log.i(TAG, "Merge solution ready. Applying batch update");
-        mContentResolver.applyBatch(FeedContract.CONTENT_AUTHORITY, batch);
+        mContentResolver.applyBatch(Transformer.CONTENT_AUTHORITY, batch);
         mContentResolver.notifyChange(
-                FeedContract.Entry.CONTENT_URI, // URI where data was modified
+                Transformer.CONTENT_URI, // URI where data was modified
                 null,                           // No local observer
                 false);                         // IMPORTANT: Do not sync to network
         // This sample doesn't support uploads, but if *your* code does, make sure you set
@@ -325,14 +306,66 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
 
+    private ArrayList<Transformer> parseTransformersResponse(InputStream stream)
+    {
+        ArrayList<Transformer> transformerArrayList = new ArrayList<Transformer>();
 
+        try
+        {
+            StringBuilder builder = new StringBuilder();
+            BufferedReader b_reader = new BufferedReader(new InputStreamReader(stream));
+            String line;
+            while((line = b_reader.readLine()) != null) {
+                builder.append(line);
+            }
+
+            JSONObject jso = new JSONObject(builder.toString());
+            JSONArray ja = jso.getJSONArray("results");
+
+            for( int i = 0; i < ja.length(); i++ ) {
+                Transformer transformerObject = new Transformer(ja.getJSONObject(i));
+                transformerArrayList.add(transformerObject);
+            }
+        }
+        catch (Exception ex) {
+            Log.e(TAG, "Failed to parse JSON due to: " + ex);
+        }
+
+        return transformerArrayList;
+    }
+
+
+    private void downloadAllObjectsForRegisteredModels()
+    {
+
+    }
+
+    private void postAllDirtyRecordsToServer()
+    {
+
+    }
+
+    private void postAllNewlyCreatedRecordsToServer()
+    {
+
+    }
+
+    private void deleteAllDeletedRecordsAtServer()
+    {
+
+    }
+
+    private void syncCompleted()
+    {
+
+    }
     /**
      * Given a string representation of a URL, sets up a connection and gets an input stream.
      */
     private InputStream downloadUrl(final URL url) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestProperty("X-Parse-Application-Id","KQXPGZ1eO7Kk08PHhitRlKDzSVYVgOn1tQ3w9BV3");
-        conn.setRequestProperty("X-Parse-REST-API-Key","HwEiZiHbopGNxdMPTMIQlIA4iu2vt68sHnaVErFH");
+        conn.setRequestProperty("X-Parse-Application-Id","TsEDR12ICJtD59JM92WslVurN0wh5JPuznKvroRc");
+        conn.setRequestProperty("X-Parse-REST-API-Key","4LC6oFNCyqLMFHSdPIPsxJoXHY6gTHGMG2kUcbwB");
         conn.setReadTimeout(NET_READ_TIMEOUT_MILLIS /* milliseconds */);
         conn.setConnectTimeout(NET_CONNECT_TIMEOUT_MILLIS /* milliseconds */);
         conn.setRequestMethod("GET");

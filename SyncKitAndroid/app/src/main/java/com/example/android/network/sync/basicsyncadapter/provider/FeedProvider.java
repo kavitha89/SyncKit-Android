@@ -25,6 +25,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
+import com.example.android.network.sync.basicsyncadapter.models.Transformer;
 import com.example.android.network.sync.basicsyncadapter.util.SelectionBuilder;
 
 public class FeedProvider extends ContentProvider {
@@ -56,8 +57,9 @@ public class FeedProvider extends ContentProvider {
      */
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
-        sUriMatcher.addURI(AUTHORITY, "entries", ROUTE_ENTRIES);
-        sUriMatcher.addURI(AUTHORITY, "entries/*", ROUTE_ENTRIES_ID);
+        sUriMatcher.addURI(AUTHORITY, "results", ROUTE_ENTRIES);
+        sUriMatcher.addURI(AUTHORITY, "results/*", ROUTE_ENTRIES);
+
     }
 
     @Override
@@ -101,7 +103,7 @@ public class FeedProvider extends ContentProvider {
                 builder.where(FeedContract.Entry._ID + "=?", id);
             case ROUTE_ENTRIES:
                 // Return all known entries.
-                builder.table(FeedContract.Entry.TABLE_NAME)
+                builder.table(Transformer.TABLE_NAME)
                        .where(selection, selectionArgs);
                 Cursor c = builder.query(db, projection, sortOrder);
                 // Note: Notification URI must be manually set here for loaders to correctly
@@ -126,8 +128,8 @@ public class FeedProvider extends ContentProvider {
         Uri result;
         switch (match) {
             case ROUTE_ENTRIES:
-                long id = db.insertOrThrow(FeedContract.Entry.TABLE_NAME, null, values);
-                result = Uri.parse(FeedContract.Entry.CONTENT_URI + "/" + id);
+                long id = db.insertOrThrow(Transformer.TABLE_NAME, null, values);
+                result = Uri.parse(Transformer.CONTENT_URI + "/" + id);
                 break;
             case ROUTE_ENTRIES_ID:
                 throw new UnsupportedOperationException("Insert not supported on URI: " + uri);
@@ -214,23 +216,32 @@ public class FeedProvider extends ContentProvider {
         /** Schema version. */
         public static final int DATABASE_VERSION = 1;
         /** Filename for SQLite file. */
-        public static final String DATABASE_NAME = "feed.db";
+        public static final String DATABASE_NAME = "SyncKitDemo.db";
 
         private static final String TYPE_TEXT = " TEXT";
         private static final String TYPE_INTEGER = " INTEGER";
         private static final String COMMA_SEP = ",";
-        /** SQL statement to create "entry" table. */
-        private static final String SQL_CREATE_ENTRIES =
-                "CREATE TABLE " + FeedContract.Entry.TABLE_NAME + " (" +
-                        FeedContract.Entry._ID + " INTEGER PRIMARY KEY," +
-                        FeedContract.Entry.COLUMN_NAME_ENTRY_ID + TYPE_TEXT + COMMA_SEP +
-                        FeedContract.Entry.COLUMN_NAME_TITLE    + TYPE_TEXT + COMMA_SEP +
-                        FeedContract.Entry.COLUMN_NAME_LINK + TYPE_TEXT + COMMA_SEP +
-                        FeedContract.Entry.COLUMN_NAME_PUBLISHED + TYPE_INTEGER + ")";
+        /** SQL statement to create "Transformer" table. */
+
+        private static final String TRANSFORMERS_SQL_CREATE_ENTRIES =
+                "CREATE TABLE " + Transformer.TABLE_NAME + " (" +
+                        Transformer.KEY_TRANSFORMER_ID + " TEXT PRIMARY KEY," +
+                        Transformer.KEY_NAME + TYPE_TEXT + COMMA_SEP +
+                        Transformer.KEY_LOCATION + TYPE_TEXT + COMMA_SEP +
+                        Transformer.KEY_MAKE + TYPE_TEXT + COMMA_SEP +
+                        Transformer.KEY_CURRENT_TEMP + TYPE_TEXT + COMMA_SEP +
+                        Transformer.KEY_OIL_LEVEL + TYPE_TEXT + COMMA_SEP +
+                        Transformer.KEY_OPERATING_POWER + TYPE_TEXT + COMMA_SEP +
+                        Transformer.KEY_WINDING_COUNT + TYPE_TEXT + COMMA_SEP +
+                        Transformer.KEY_WINDING_MAKE + TYPE_TEXT + COMMA_SEP +
+                        Transformer.KEY_TYPE + TYPE_TEXT + COMMA_SEP +
+                        Transformer.KEY_LAST_UPDATED_TIME + TYPE_TEXT + COMMA_SEP +
+                        Transformer.KEY_LAST_SERVER_SYNC_DATE + TYPE_TEXT + COMMA_SEP +
+                        Transformer.KEY_SYNC_STATUS + TYPE_INTEGER + ")";
 
         /** SQL statement to drop "entry" table. */
         private static final String SQL_DELETE_ENTRIES =
-                "DROP TABLE IF EXISTS " + FeedContract.Entry.TABLE_NAME;
+                "DROP TABLE IF EXISTS " + Transformer.TABLE_NAME;
 
         public FeedDatabase(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -238,7 +249,11 @@ public class FeedProvider extends ContentProvider {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(SQL_CREATE_ENTRIES);
+
+            //create all tables
+            db.execSQL(TRANSFORMERS_SQL_CREATE_ENTRIES);
+
+
         }
 
         @Override

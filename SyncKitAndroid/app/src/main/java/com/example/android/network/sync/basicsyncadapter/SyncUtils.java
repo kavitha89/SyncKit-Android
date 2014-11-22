@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 import com.example.android.network.sync.basicsyncadapter.accounts.GenericAccountService;
+import com.example.android.network.sync.basicsyncadapter.models.Transformer;
 import com.example.android.network.sync.basicsyncadapter.provider.FeedContract;
 
 /**
@@ -31,7 +32,7 @@ import com.example.android.network.sync.basicsyncadapter.provider.FeedContract;
  */
 public class SyncUtils {
     private static final long SYNC_FREQUENCY = 60 * 60;  // 1 hour (in seconds)
-    private static final String CONTENT_AUTHORITY = FeedContract.CONTENT_AUTHORITY;
+    private static final String CONTENT_AUTHORITY = Transformer.CONTENT_AUTHORITY;
     private static final String PREF_SETUP_COMPLETE = "setup_complete";
 
     /**

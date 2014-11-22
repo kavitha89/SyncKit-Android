@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="debug">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/SyncKitAndroid/app/build/intermediates/pre-dexed/debug/classes-9877e804093c9f6bd19b2f74a42cfd520a424696.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SyncKitAndroid/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.0-16c54b6c7585fce3f292c37bf7e5ffb057a21c9f.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SyncKitAndroid/app/build/intermediates/pre-dexed/debug/classes-eada64b2daa90b6e28bed63a9f5d7a920b910543.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SyncKitAndroid/app/build/intermediates/pre-dexed/debug/gson-2.3-39ad06c435e6b93c89b4927cb64b9a69dca85376.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SyncKitAndroid/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.0-ee576f91b45a6538d4156fc6e674b6f65034f74e.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SyncKitAndroid/app/build/intermediates/pre-dexed/debug/guava-14.0.1-ee117bdc03ddeeb19e45632046bd1e040f17db56.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
