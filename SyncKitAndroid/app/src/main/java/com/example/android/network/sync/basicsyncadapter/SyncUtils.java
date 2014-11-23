@@ -25,7 +25,6 @@ import android.preference.PreferenceManager;
 
 import com.example.android.network.sync.basicsyncadapter.accounts.GenericAccountService;
 import com.example.android.network.sync.basicsyncadapter.models.Transformer;
-import com.example.android.network.sync.basicsyncadapter.provider.FeedContract;
 
 /**
  * Static helper methods for working with the sync framework.
@@ -88,7 +87,7 @@ public class SyncUtils {
         b.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         ContentResolver.requestSync(
                 GenericAccountService.GetAccount(),      // Sync account
-                FeedContract.CONTENT_AUTHORITY, // Content authority
+                Transformer.CONTENT_AUTHORITY, // Content authority
                 b);                                      // Extras
     }
 }

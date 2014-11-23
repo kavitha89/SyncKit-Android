@@ -56,7 +56,7 @@ public class FeedContract {
          * MIME type for individual entries.
          */
         public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.basicsyncadapter.entry";
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.basicsyncadapter.results";
 
         /**
          * Fully qualified URI for "entry" resources.

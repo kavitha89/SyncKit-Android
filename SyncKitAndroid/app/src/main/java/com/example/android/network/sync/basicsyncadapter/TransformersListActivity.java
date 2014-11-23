@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class TrListActivity extends ActionBarActivity {
+public class TransformersListActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class TrListActivity extends ActionBarActivity {
         setContentView(R.layout.activity_tr_list);
         final ListView listview = (ListView) findViewById(R.id.trListview);
 
-        List<Transformer> transformerList = buildData();
+        List<Transformer> transformerList = Transformer.fetchAllTransformerObjectsInDB(this.getContentResolver());
         String[] from = { Transformer.KEY_NAME,Transformer.KEY_LOCATION };
         int[] to = { android.R.id.text1,android.R.id.text2 };
 
@@ -49,31 +49,14 @@ public class TrListActivity extends ActionBarActivity {
 
             final ContentResolver contentResolver =this.getContentResolver();
 
-            Cursor c = null;
-
             Uri uri = Transformer.CONTENT_URI; // Get all entries
-            c = contentResolver.query(uri, null, null, null, null);
+            Cursor c = contentResolver.query(uri, null, null, null, null);
 
             while (c.moveToNext()) {
 
-                Transformer transformer = new Transformer(c.getString(2),c.getString(3));
+                Transformer transformer = new Transformer(c.getString(1),c.getString(2));
                 posts.add(transformer);
             }
-
-            /*JSONObject jso = new JSONObject(loadJSONFromAsset());
-            JSONArray ja = jso.getJSONArray("results");
-
-            GsonBuilder gsonBuilder = new GsonBuilder();
-            gsonBuilder.setDateFormat("M/d/yy hh:mm a");
-            Gson gson = gsonBuilder.create();
-
-            posts = Arrays.asList(gson.fromJson(ja.toString(), Transformer[].class));
-
-            ArrayList<Map<String, String>> list = new ArrayList<Map<String, String>>();
-            list.add(putData("boiler"));
-            list.add(putData("pipe"));
-            list.add(putData("transformer"));
-            list.add(putData("turbine"));*/
 
             return posts;
         }

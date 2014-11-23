@@ -32,10 +32,6 @@
 
         <!-- Main activity, responsible for showing a list of feed entries. -->
         <activity
-            android:name=".EntryListActivity"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
             android:name=".ModelSelectionActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat.Light" >
@@ -48,12 +44,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TransformerListActivity"
-            android:label="@string/title_activity_transformer_list"
-            android:theme="@style/Theme.AppCompat.Light" >
-        </activity>
-        <activity
-            android:name=".TrListActivity"
+            android:name=".TransformersListActivity"
             android:label="@string/transformer_list_activity"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>

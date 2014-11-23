@@ -33,7 +33,6 @@ import android.util.Log;
 import com.example.android.network.sync.basicsyncadapter.models.Boiler;
 import com.example.android.network.sync.basicsyncadapter.models.Transformer;
 import com.example.android.network.sync.basicsyncadapter.net.FeedParser;
-import com.example.android.network.sync.basicsyncadapter.provider.FeedContract;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -44,6 +43,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -64,7 +65,10 @@ import java.util.Map;
  * SyncService.
  */
 class SyncAdapter extends AbstractThreadedSyncAdapter {
+
     public static final String TAG = "SyncAdapter";
+
+    public ArrayList<Class> modelsRegisteredForSync;
 
     /**
      * URL to fetch content from during a sync.
@@ -89,15 +93,6 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
      */
     private final ContentResolver mContentResolver;
 
-    /**
-     * Project used when querying content provider. Returns all known fields.
-     */
-    private static final String[] PROJECTION = new String[] {
-            FeedContract.Entry._ID,
-            FeedContract.Entry.COLUMN_NAME_ENTRY_ID,
-            FeedContract.Entry.COLUMN_NAME_TITLE,
-            FeedContract.Entry.COLUMN_NAME_LINK,
-            FeedContract.Entry.COLUMN_NAME_PUBLISHED};
 
     // Constants representing column positions from PROJECTION.
     public static final int COLUMN_ID = 0;
@@ -112,6 +107,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
         mContentResolver = context.getContentResolver();
+        addModelsToSync();
     }
 
     /**
@@ -120,8 +116,16 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
     public SyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
         super(context, autoInitialize, allowParallelSyncs);
         mContentResolver = context.getContentResolver();
+        addModelsToSync();
     }
 
+
+    private void addModelsToSync()
+    {
+        modelsRegisteredForSync = new ArrayList<Class>();
+        modelsRegisteredForSync.add(Transformer.class);
+
+    }
     /**
      * Called by the Android system in response to a request to run the sync adapter. The work
      * required to read data from the network, parse it, and store it in the content provider is
@@ -147,8 +151,9 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
 
             try {
                 Log.i(TAG, "Streaming data from network: " + location);
-                stream = downloadUrl(location);
-                updateLocalFeedData(stream, syncResult);
+                downloadAllObjectsForRegisteredModels(syncResult);
+                //stream = downloadUrl(location);
+                //updateLocalFeedData(stream, syncResult);
                 // Makes sure that the InputStream is closed after the app is
                 // finished using it.
             }
@@ -157,7 +162,19 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
                     stream.close();
                 }
             }
-        } catch (MalformedURLException e) {
+        }
+
+        catch (InvocationTargetException e)
+        {
+
+        }
+
+        catch (IllegalAccessException e)
+        {
+
+        }
+
+        catch (MalformedURLException e) {
             Log.wtf(TAG, "Feed URL is malformed", e);
             syncResult.stats.numParseExceptions++;
             return;
@@ -165,7 +182,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
             Log.e(TAG, "Error reading from network: " + e.toString());
             syncResult.stats.numIoExceptions++;
             return;
-        } catch (XmlPullParserException e) {
+        } /*catch (XmlPullParserException e) {
             Log.e(TAG, "Error parsing feed: " + e.toString());
             syncResult.stats.numParseExceptions++;
             return;
@@ -181,7 +198,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
             Log.e(TAG, "Error updating database: " + e.toString());
             syncResult.databaseError = true;
             return;
-        }
+        }*/
         Log.i(TAG, "Network synchronization complete");
     }
 
@@ -210,12 +227,10 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
             OperationApplicationException, ParseException {
 
 
-
-        final FeedParser feedParser = new FeedParser();
         final ContentResolver contentResolver = getContext().getContentResolver();
 
         Log.i(TAG, "Parsing stream as Atom feed");
-        final List<Transformer> entries = this.parseTransformersResponse(stream);
+        final List<Transformer> entries = null; /*=this.parseTransformersResponse(stream)*/;
         ;
         Log.i(TAG, "Parsing complete. Found " + entries.size() + " entries");
 
@@ -268,7 +283,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
                     batch.add(ContentProviderOperation.newUpdate(existingUri)
                             .withValue(Transformer.KEY_NAME, name)
                             .withValue(Transformer.KEY_LOCATION, location)
-                            .withValue(Transformer.KEY_TRANSFORMER_ID, id)
+
                             .build());
                     syncResult.stats.numUpdates++;
                 } else {
@@ -292,6 +307,17 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
                     .withValue(Transformer.KEY_TRANSFORMER_ID, e.transformerID)
                     .withValue(Transformer.KEY_NAME, e.trsName)
                     .withValue(Transformer.KEY_LOCATION, e.trsLocation)
+                    .withValue(Transformer.KEY_CURRENT_TEMP, e.trsCurrentTemp)
+                    .withValue(Transformer.KEY_LAST_SERVER_SYNC_DATE, e.lastServerSyncDate)
+                    .withValue(Transformer.KEY_LAST_UPDATED_TIME, e.lastServerSyncDate)
+                    .withValue(Transformer.KEY_SYNC_STATUS, 0)
+                    .withValue(Transformer.KEY_MAKE, e.trsMake)
+                    .withValue(Transformer.KEY_WINDING_MAKE, e.trsWindingMake)
+                    .withValue(Transformer.KEY_WINDING_COUNT, e.trsWindingCount)
+                    .withValue(Transformer.KEY_OIL_LEVEL, e.trsOilLevel)
+                    .withValue(Transformer.KEY_OPERATING_POWER, e.trsOperatingPower)
+                    .withValue(Transformer.KEY_TYPE, e.trsType)
+
                     .build());
             syncResult.stats.numInserts++;
         }
@@ -306,38 +332,37 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
 
-    private ArrayList<Transformer> parseTransformersResponse(InputStream stream)
-    {
-        ArrayList<Transformer> transformerArrayList = new ArrayList<Transformer>();
 
-        try
+    private void downloadAllObjectsForRegisteredModels(SyncResult syncResults) throws InvocationTargetException, IllegalAccessException {
+        //first see if there are any rows with sync status with 0, else fetch all
+        for (Class sClass : modelsRegisteredForSync)
         {
-            StringBuilder builder = new StringBuilder();
-            BufferedReader b_reader = new BufferedReader(new InputStreamReader(stream));
-            String line;
-            while((line = b_reader.readLine()) != null) {
-                builder.append(line);
+            try {
+                doFetchAllForURL(sClass,syncResults);
             }
 
-            JSONObject jso = new JSONObject(builder.toString());
-            JSONArray ja = jso.getJSONArray("results");
+            catch (Exception ex)
+            {
 
-            for( int i = 0; i < ja.length(); i++ ) {
-                Transformer transformerObject = new Transformer(ja.getJSONObject(i));
-                transformerArrayList.add(transformerObject);
             }
-        }
-        catch (Exception ex) {
-            Log.e(TAG, "Failed to parse JSON due to: " + ex);
-        }
 
-        return transformerArrayList;
+        }
     }
 
-
-    private void downloadAllObjectsForRegisteredModels()
+    private void downloadDeltaForAllRegisteredModels()
     {
+        for (Class sClass : modelsRegisteredForSync)
+        {
+            try {
+                //doFetchAllForURL(sClass);
+            }
 
+            catch (Exception ex)
+            {
+
+            }
+
+        }
     }
 
     private void postAllDirtyRecordsToServer()
@@ -362,18 +387,59 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
     /**
      * Given a string representation of a URL, sets up a connection and gets an input stream.
      */
-    private InputStream downloadUrl(final URL url) throws IOException {
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestProperty("X-Parse-Application-Id","TsEDR12ICJtD59JM92WslVurN0wh5JPuznKvroRc");
-        conn.setRequestProperty("X-Parse-REST-API-Key","4LC6oFNCyqLMFHSdPIPsxJoXHY6gTHGMG2kUcbwB");
-        conn.setReadTimeout(NET_READ_TIMEOUT_MILLIS /* milliseconds */);
-        conn.setConnectTimeout(NET_CONNECT_TIMEOUT_MILLIS /* milliseconds */);
-        conn.setRequestMethod("GET");
-        conn.setDoInput(true);
-        // Starts the query
-        conn.connect();
-        Log.i(TAG, "Response from parse.com : " + conn.getResponseMessage());
-        Log.i(TAG, "Status Code from parse.com : " + conn.getResponseCode());
-        return conn.getInputStream();
+    private void doFetchAllForURL(Class sClass,SyncResult sResults) throws IOException {
+
+        try {
+        Method urlForFetchAllMethod = sClass.getDeclaredMethod("urlForFetchAll",null);
+        String urlForFetchAll = (String)urlForFetchAllMethod.invoke(null,null);
+
+        System.out.println(urlForFetchAll);
+        final URL fetchAllURL = new URL(urlForFetchAll);
+
+            HttpURLConnection conn = (HttpURLConnection) fetchAllURL.openConnection();
+            conn.setRequestProperty("X-Parse-Application-Id","TsEDR12ICJtD59JM92WslVurN0wh5JPuznKvroRc");
+            conn.setRequestProperty("X-Parse-REST-API-Key","4LC6oFNCyqLMFHSdPIPsxJoXHY6gTHGMG2kUcbwB");
+            conn.setReadTimeout(NET_READ_TIMEOUT_MILLIS /* milliseconds */);
+            conn.setConnectTimeout(NET_CONNECT_TIMEOUT_MILLIS /* milliseconds */);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            // Starts the query
+            conn.connect();
+            Log.i(TAG, "Response from parse.com : " + conn.getResponseMessage());
+            Log.i(TAG, "Status Code from parse.com : " + conn.getResponseCode());
+
+            Class[] cArg = new Class[3];
+            cArg[0] = ContentResolver.class;
+            cArg[1] = InputStream.class;
+            cArg[2] = SyncResult.class;
+
+            Method handleDataForModel = sClass.getDeclaredMethod("handleInsertWithData", cArg);
+            SyncResult objectsUpdated = (SyncResult) handleDataForModel.invoke(null, mContentResolver,conn.getInputStream(),sResults);
+        }
+
+        catch (Exception ex)
+        {
+            Log.i(TAG,"exception " + ex.toString());
+        }
+    }
+
+    private void updateDataBaseForModel(Class syncModel,SyncResult syncResults,InputStream stream)
+    {
+        //1. parse data and get array of objects.
+        //2. determine what kind of class it is
+        //3. start iterating the parsed data and check for previous objects with same id.
+        //4. if it does'nt exist then directly insert.
+        //5. if it exists then check its syncFlag.
+        //6. if syncFlag is 0 then force update.
+        //7. if syncFlag is anything other than 0 then mark that record as conflicted.
+        //8. go to next record.
+
+        try {
+
+        }
+        catch (Exception ex)
+        {
+
+        }
     }
 }

@@ -34,7 +34,7 @@ public class FeedProvider extends ContentProvider {
     /**
      * Content authority for this provider.
      */
-    private static final String AUTHORITY = FeedContract.CONTENT_AUTHORITY;
+    private static final String AUTHORITY = Transformer.CONTENT_AUTHORITY;
 
     // The constants below represent individual URI routes, as IDs. Every URI pattern recognized by
     // this ContentProvider is defined using sUriMatcher.addURI(), and associated with one of these
@@ -76,9 +76,9 @@ public class FeedProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case ROUTE_ENTRIES:
-                return FeedContract.Entry.CONTENT_TYPE;
+                return Transformer.CONTENT_TYPE;
             case ROUTE_ENTRIES_ID:
-                return FeedContract.Entry.CONTENT_ITEM_TYPE;
+                return Transformer.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -100,7 +100,7 @@ public class FeedProvider extends ContentProvider {
             case ROUTE_ENTRIES_ID:
                 // Return a single entry, by ID.
                 String id = uri.getLastPathSegment();
-                builder.where(FeedContract.Entry._ID + "=?", id);
+                builder.where(Transformer.KEY_TRANSFORMER_ID + "=?", id);
             case ROUTE_ENTRIES:
                 // Return all known entries.
                 builder.table(Transformer.TABLE_NAME)
@@ -154,14 +154,14 @@ public class FeedProvider extends ContentProvider {
         int count;
         switch (match) {
             case ROUTE_ENTRIES:
-                count = builder.table(FeedContract.Entry.TABLE_NAME)
+                count = builder.table(Transformer.TABLE_NAME)
                         .where(selection, selectionArgs)
                         .delete(db);
                 break;
             case ROUTE_ENTRIES_ID:
                 String id = uri.getLastPathSegment();
-                count = builder.table(FeedContract.Entry.TABLE_NAME)
-                       .where(FeedContract.Entry._ID + "=?", id)
+                count = builder.table(Transformer.TABLE_NAME)
+                       .where(Transformer.KEY_TRANSFORMER_ID + "=?", id)
                        .where(selection, selectionArgs)
                        .delete(db);
                 break;
@@ -186,14 +186,14 @@ public class FeedProvider extends ContentProvider {
         int count;
         switch (match) {
             case ROUTE_ENTRIES:
-                count = builder.table(FeedContract.Entry.TABLE_NAME)
+                count = builder.table(Transformer.TABLE_NAME)
                         .where(selection, selectionArgs)
                         .update(db, values);
                 break;
             case ROUTE_ENTRIES_ID:
                 String id = uri.getLastPathSegment();
-                count = builder.table(FeedContract.Entry.TABLE_NAME)
-                        .where(FeedContract.Entry._ID + "=?", id)
+                count = builder.table(Transformer.TABLE_NAME)
+                        .where(Transformer.KEY_TRANSFORMER_ID + "=?", id)
                         .where(selection, selectionArgs)
                         .update(db, values);
                 break;

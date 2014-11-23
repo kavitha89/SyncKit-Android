@@ -22,27 +22,21 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SyncStatusObserver;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 
 import com.example.android.network.sync.basicsyncadapter.accounts.GenericAccountService;
 import com.example.android.network.sync.basicsyncadapter.models.Transformer;
-import com.example.android.network.sync.basicsyncadapter.provider.FeedContract;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,7 +75,7 @@ public class ModelSelectionFragment extends ListFragment
      * Handle to a SyncObserver. The ProgressBar element is visible until the SyncObserver reports
      * that the sync is complete.
      *
-     * <p>This allows us to delete our SyncObserver once the  pplication is no longer in the
+     * <p>This allows us to delete our SyncObserver once the  application is no longer in the
      * foreground.
      */
     private Object mSyncObserverHandle;
@@ -91,46 +85,6 @@ public class ModelSelectionFragment extends ListFragment
      */
     private Menu mOptionsMenu;
 
-    /**
-     * Projection for querying the content provider.
-     */
-    private static final String[] PROJECTION = new String[]{
-            FeedContract.Entry._ID,
-            FeedContract.Entry.COLUMN_NAME_TITLE,
-            FeedContract.Entry.COLUMN_NAME_LINK,
-            FeedContract.Entry.COLUMN_NAME_PUBLISHED
-    };
-
-    // Column indexes. The index of a column in the Cursor is the same as its relative position in
-    // the projection.
-    /** Column index for _ID */
-    private static final int COLUMN_ID = 0;
-    /** Column index for title */
-    private static final int COLUMN_TITLE = 1;
-    /** Column index for link */
-    private static final int COLUMN_URL_STRING = 2;
-    /** Column index for published */
-    private static final int COLUMN_PUBLISHED = 3;
-
-    /**
-     * List of Cursor columns to read from when preparing an adapter to populate the ListView.
-     */
-    private static final String[] FROM_COLUMNS = new String[]{
-            FeedContract.Entry.COLUMN_NAME_TITLE,
-            FeedContract.Entry.COLUMN_NAME_PUBLISHED
-    };
-
-    /**
-     * List of Views which will be populated by Cursor data.
-     */
-    private static final int[] TO_FIELDS = new int[]{
-            android.R.id.text1,
-            android.R.id.text2};
-
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public ModelSelectionFragment() {}
 
     @Override
@@ -321,7 +275,7 @@ public class ModelSelectionFragment extends ListFragment
         Log.i(TAG,"Model Clicked: " + count);
 
         if(count.equals("Transformer")) {
-            Intent intent = new Intent(getActivity(), TrListActivity.class);
+            Intent intent = new Intent(getActivity(), TransformersListActivity.class);
             startActivity(intent);
         }
 
