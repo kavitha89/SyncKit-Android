@@ -321,7 +321,6 @@ public class Transformer extends HashMap<String,String> {
                         // Update existing record
                         Log.i(TAG, "Scheduling update: " + existingUri);
                         batch.add(ContentProviderOperation.newUpdate(existingUri)
-                                .withValue(Transformer.KEY_TRANSFORMER_ID, e.transformerID)
                                 .withValue(Transformer.KEY_NAME, e.trsName)
                                 .withValue(Transformer.KEY_LOCATION, e.trsLocation)
                                 .withValue(Transformer.KEY_CURRENT_TEMP, e.trsCurrentTemp)
@@ -442,11 +441,20 @@ public class Transformer extends HashMap<String,String> {
             syncResult.stats.numInserts++;
         }*/
         Log.i(TAG, "Merge solution ready. Applying batch update");
-        contentResolver.applyBatch(Transformer.CONTENT_AUTHORITY, batch);
-        contentResolver.notifyChange(
-                Transformer.CONTENT_URI, // URI where data was modified
-                null,                           // No local observer
-                false);                         // IMPORTANT: Do not sync to network
+
+        try {
+            contentResolver.applyBatch(Transformer.CONTENT_AUTHORITY, batch);
+            contentResolver.notifyChange(
+                    Transformer.CONTENT_URI, // URI where data was modified
+                    null,                           // No local observer
+                    false);
+        }
+
+        catch (Exception ex)
+        {
+            System.out.println(ex.toString());
+        }
+                       // IMPORTANT: Do not sync to network
         // This sample doesn't support uploads, but if *your* code does, make sure you set
         // syncToNetwork=false in the line above to prevent duplicate syncs.
         return syncResult;

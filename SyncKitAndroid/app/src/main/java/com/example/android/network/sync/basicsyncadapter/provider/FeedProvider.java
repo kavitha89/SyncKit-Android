@@ -58,7 +58,7 @@ public class FeedProvider extends ContentProvider {
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
         sUriMatcher.addURI(AUTHORITY, "results", ROUTE_ENTRIES);
-        sUriMatcher.addURI(AUTHORITY, "results/*", ROUTE_ENTRIES);
+        sUriMatcher.addURI(AUTHORITY, "results/*", ROUTE_ENTRIES_ID);
 
     }
 
