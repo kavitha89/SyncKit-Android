@@ -6,9 +6,12 @@ import android.content.OperationApplicationException;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.example.android.network.sync.basicsyncadapter.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
 import org.json.JSONArray;
@@ -17,6 +20,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,7 +30,7 @@ import java.util.List;
 /**
  * Created by Veni on 11/10/14.
  */
-public class Transformer extends HashMap<String,String> {
+public class Transformer implements Parcelable{
 
     public static final String TAG = "Transformer Model";
 
@@ -183,6 +187,102 @@ public class Transformer extends HashMap<String,String> {
         return null;
     }
 
+    public void commitTransformerObjectToDB(ContentResolver resolver)
+    {
+        ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>();
+
+        batch.add(ContentProviderOperation.newInsert(Transformer.CONTENT_URI)
+                .withValue(Transformer.KEY_TRANSFORMER_ID, this.transformerID)
+                .withValue(Transformer.KEY_NAME, this.trsName)
+                .withValue(Transformer.KEY_LOCATION, this.trsLocation)
+                .withValue(Transformer.KEY_CURRENT_TEMP, this.trsCurrentTemp)
+                .withValue(Transformer.KEY_LAST_SERVER_SYNC_DATE, this.lastServerSyncDate)
+                .withValue(Transformer.KEY_LAST_UPDATED_TIME, this.lastServerSyncDate)
+                .withValue(Transformer.KEY_SYNC_STATUS, Constants.SYNC_STATUS.INSERTED.getValue())
+                .withValue(Transformer.KEY_MAKE, this.trsMake)
+                .withValue(Transformer.KEY_WINDING_MAKE, this.trsWindingMake)
+                .withValue(Transformer.KEY_WINDING_COUNT, this.trsWindingCount)
+                .withValue(Transformer.KEY_OIL_LEVEL, this.trsOilLevel)
+                .withValue(Transformer.KEY_OPERATING_POWER, this.trsOperatingPower)
+                .withValue(Transformer.KEY_TYPE, this.trsType)
+                .build());
+        try {
+
+            resolver.applyBatch(Transformer.CONTENT_AUTHORITY, batch);
+            resolver.notifyChange(
+                    Transformer.CONTENT_URI, // URI where data was modified
+                    null,                           // No local observer
+                    false);
+        }
+
+        catch (Exception ex)
+        {
+            System.out.println(ex.toString());
+        }
+    }
+
+    public void updateTransformerObjectInDB(ContentResolver resolver)
+    {
+        ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>();
+
+        Uri existingUri = Transformer.CONTENT_URI.buildUpon()
+                .appendPath(this.transformerID).build();
+        Log.i(TAG, "Scheduling update: " + existingUri);
+        batch.add(ContentProviderOperation.newUpdate(existingUri)
+                .withValue(Transformer.KEY_NAME, this.trsName)
+                .withValue(Transformer.KEY_LOCATION, this.trsLocation)
+                .withValue(Transformer.KEY_CURRENT_TEMP, this.trsCurrentTemp)
+                .withValue(Transformer.KEY_LAST_SERVER_SYNC_DATE, this.lastServerSyncDate)
+                .withValue(Transformer.KEY_LAST_UPDATED_TIME, this.lastServerSyncDate)
+                .withValue(Transformer.KEY_SYNC_STATUS, Constants.SYNC_STATUS.DIRTY.getValue())
+                .withValue(Transformer.KEY_MAKE, this.trsMake)
+                .withValue(Transformer.KEY_WINDING_MAKE, this.trsWindingMake)
+                .withValue(Transformer.KEY_WINDING_COUNT, this.trsWindingCount)
+                .withValue(Transformer.KEY_OIL_LEVEL, this.trsOilLevel)
+                .withValue(Transformer.KEY_OPERATING_POWER, this.trsOperatingPower)
+                .withValue(Transformer.KEY_TYPE, this.trsType)
+                .build());
+        try {
+
+            resolver.applyBatch(Transformer.CONTENT_AUTHORITY, batch);
+            resolver.notifyChange(
+                    Transformer.CONTENT_URI, // URI where data was modified
+                    null,                           // No local observer
+                    false);
+        }
+
+        catch (Exception ex)
+        {
+            System.out.println(ex.toString());
+        }
+    }
+
+    public static void setSyncFlagForTransformerObjectWithId(String transformerID,int syncStatus, ContentResolver resolver)
+    {
+        ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>();
+
+        Uri existingUri = Transformer.CONTENT_URI.buildUpon()
+                .appendPath(transformerID).build();
+        Log.i(TAG, "Scheduling update: " + existingUri);
+        batch.add(ContentProviderOperation.newUpdate(existingUri)
+                .withValue(Transformer.KEY_SYNC_STATUS, syncStatus)
+                .build());
+        try {
+
+            resolver.applyBatch(Transformer.CONTENT_AUTHORITY, batch);
+            resolver.notifyChange(
+                    Transformer.CONTENT_URI, // URI where data was modified
+                    null,                           // No local observer
+                    false);
+        }
+
+        catch (Exception ex)
+        {
+            System.out.println(ex.toString());
+        }
+
+    }
+
 
     public static boolean isTransformerExistsWithIDInTable(String transformerID,ContentResolver resolver)
     {
@@ -314,7 +414,7 @@ public class Transformer extends HashMap<String,String> {
                 //update the objects with sync_status = 0, else leave for now
                 System.out.println("Yes Object Exists");
 
-                if(getSyncStatusForObjectWithID(transformerListFromDB, e.transformerID) == 0)
+                if(getSyncStatusForObjectWithID(transformerListFromDB, e.transformerID) == Constants.SYNC_STATUS.SYNCED.getValue())
                 {
                     Uri existingUri = Transformer.CONTENT_URI.buildUpon()
                             .appendPath(e.transformerID).build();
@@ -326,7 +426,7 @@ public class Transformer extends HashMap<String,String> {
                                 .withValue(Transformer.KEY_CURRENT_TEMP, e.trsCurrentTemp)
                                 .withValue(Transformer.KEY_LAST_SERVER_SYNC_DATE, e.lastServerSyncDate)
                                 .withValue(Transformer.KEY_LAST_UPDATED_TIME, e.lastServerSyncDate)
-                                .withValue(Transformer.KEY_SYNC_STATUS, 0)
+                                .withValue(Transformer.KEY_SYNC_STATUS, Constants.SYNC_STATUS.SYNCED.getValue())
                                 .withValue(Transformer.KEY_MAKE, e.trsMake)
                                 .withValue(Transformer.KEY_WINDING_MAKE, e.trsWindingMake)
                                 .withValue(Transformer.KEY_WINDING_COUNT, e.trsWindingCount)
@@ -350,7 +450,7 @@ public class Transformer extends HashMap<String,String> {
                         .withValue(Transformer.KEY_CURRENT_TEMP, e.trsCurrentTemp)
                         .withValue(Transformer.KEY_LAST_SERVER_SYNC_DATE, e.lastServerSyncDate)
                         .withValue(Transformer.KEY_LAST_UPDATED_TIME, e.lastServerSyncDate)
-                        .withValue(Transformer.KEY_SYNC_STATUS, 0)
+                        .withValue(Transformer.KEY_SYNC_STATUS, Constants.SYNC_STATUS.SYNCED.getValue())
                         .withValue(Transformer.KEY_MAKE, e.trsMake)
                         .withValue(Transformer.KEY_WINDING_MAKE, e.trsWindingMake)
                         .withValue(Transformer.KEY_WINDING_COUNT, e.trsWindingCount)
@@ -504,16 +604,6 @@ public class Transformer extends HashMap<String,String> {
     public static String KEY_LAST_UPDATED_TIME = "lastUpdatedTime";
     public static String KEY_LAST_SERVER_SYNC_DATE = "lastServerSyncTime";
 
-    @Override
-    public String get(Object k) {
-        String key = (String) k;
-        if (KEY_NAME.equals(key))
-            return trsName;
-        else if (KEY_LOCATION.equals(key))
-            return trsLocation;
-        return null;
-    }
-
     public  Transformer()
     {
         this.syncStatus = -1;
@@ -574,4 +664,55 @@ public class Transformer extends HashMap<String,String> {
     @SerializedName("objectId")
     public String transformerID;
 
+    protected Transformer(Parcel in) {
+        long tmpLastServerSyncDate = in.readLong();
+        lastServerSyncDate = tmpLastServerSyncDate != -1 ? new Date(tmpLastServerSyncDate) : null;
+        long tmpLastUpdatedDate = in.readLong();
+        lastUpdatedDate = tmpLastUpdatedDate != -1 ? new Date(tmpLastUpdatedDate) : null;
+        syncStatus = in.readInt();
+        trsLocation = in.readString();
+        trsName = in.readString();
+        trsOperatingPower = in.readString();
+        trsOilLevel = in.readString();
+        trsWindingCount = in.readString();
+        trsMake = in.readString();
+        trsWindingMake = in.readString();
+        trsCurrentTemp = in.readString();
+        trsType = in.readString();
+        transformerID = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(lastServerSyncDate != null ? lastServerSyncDate.getTime() : -1L);
+        dest.writeLong(lastUpdatedDate != null ? lastUpdatedDate.getTime() : -1L);
+        dest.writeInt(syncStatus);
+        dest.writeString(trsLocation);
+        dest.writeString(trsName);
+        dest.writeString(trsOperatingPower);
+        dest.writeString(trsOilLevel);
+        dest.writeString(trsWindingCount);
+        dest.writeString(trsMake);
+        dest.writeString(trsWindingMake);
+        dest.writeString(trsCurrentTemp);
+        dest.writeString(trsType);
+        dest.writeString(transformerID);
+    }
+
+    public static final Parcelable.Creator<Transformer> CREATOR = new Parcelable.Creator<Transformer>() {
+        @Override
+        public Transformer createFromParcel(Parcel in) {
+            return new Transformer(in);
+        }
+
+        @Override
+        public Transformer[] newArray(int size) {
+            return new Transformer[size];
+        }
+    };
 }

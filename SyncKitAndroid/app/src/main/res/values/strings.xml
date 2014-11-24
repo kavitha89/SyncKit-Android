@@ -21,6 +21,7 @@ limitations under the License.
     <string name="title_entry_detail">Entry Detail</string>
     <string name="loading">Waiting for sync...</string>
     <string name="description_refresh">Refresh</string>
+    <string name="description_add">Add</string>
     <string name="title_activity_model_selection">ModelSelectionActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -30,5 +31,17 @@ limitations under the License.
     <string name="title_activity_pipe">PipeActivity</string>
     <string name="title_activity_turbine_list">TurbineListActivity</string>
     <string name="title_activity_boiler_list">BoilerListActivity</string>
+    <string name="title_activity_transformer_details_activity">Edit Transformer Details</string>
+    <string name="description_save">Save</string>
+    <string name="transformer_name">Transformer Name</string>
+    <string name="transformer_location">Transformer Location</string>
+    <string name="transformer_current_temp">Transformer Current Temperature</string>
+    <string name="transformer_make">Transformer Make</string>
+    <string name="transformer_winding_count">Transformer Winding Count</string>
+    <string name="transformer_winding_make">Transformer Winding Make</string>
+    <string name="transformer_oil_level">Transformer Oil Level</string>
+    <string name="transformer_operating_power">Transformer Operating Power</string>
+    <string name="transformer_type">Transformer Type</string>
+
 
 </resources>

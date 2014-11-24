@@ -726,6 +726,7 @@ containing a value of this type.
         public static final int dialog_fixed_width_major=0x7f0a0016;
         public static final int dialog_fixed_width_minor=0x7f0a0017;
         public static final int indeterminate_progress_size=0x7f0a0018;
+        public static final int text_font_size=0x7f0a0019;
     }
     public static final class drawable {
         public static final int abc_ab_bottom_solid_dark_holo=0x7f020000;
@@ -815,8 +816,11 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int ic_action_refresh=0x7f020057;
-        public static final int ic_launcher=0x7f020058;
+        public static final int ic_action_add=0x7f020057;
+        public static final int ic_action_new=0x7f020058;
+        public static final int ic_action_refresh=0x7f020059;
+        public static final int ic_action_save=0x7f02005a;
+        public static final int ic_launcher=0x7f02005b;
     }
     public static final class id {
         public static final int action_bar=0x7f09001c;
@@ -830,7 +834,7 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f090015;
         public static final int action_menu_presenter=0x7f090016;
         public static final int action_mode_close_button=0x7f090024;
-        public static final int action_settings=0x7f090043;
+        public static final int action_settings=0x7f09004e;
         public static final int activity_chooser_view_content=0x7f090025;
         public static final int always=0x7f09000f;
         public static final int beginning=0x7f09000a;
@@ -842,6 +846,15 @@ containing a value of this type.
         public static final int disableHome=0x7f090008;
         public static final int dropdown=0x7f090013;
         public static final int edit_query=0x7f090030;
+        public static final int edit_transformer_current_temp=0x7f090043;
+        public static final int edit_transformer_location=0x7f090042;
+        public static final int edit_transformer_make=0x7f090044;
+        public static final int edit_transformer_name=0x7f090041;
+        public static final int edit_transformer_oil_level=0x7f090047;
+        public static final int edit_transformer_operating_power=0x7f090048;
+        public static final int edit_transformer_type=0x7f090049;
+        public static final int edit_transformer_winding_count=0x7f090045;
+        public static final int edit_transformer_winding_make=0x7f090046;
         public static final int end=0x7f09000c;
         public static final int entry_list=0x7f09003d;
         public static final int expand_activities_button=0x7f090026;
@@ -853,7 +866,9 @@ containing a value of this type.
         public static final int image=0x7f090027;
         public static final int listMode=0x7f090001;
         public static final int list_item=0x7f090029;
-        public static final int menu_refresh=0x7f090044;
+        public static final int menu_add_new_transformer=0x7f090051;
+        public static final int menu_refresh=0x7f09004f;
+        public static final int menu_save_transformer_details=0x7f090050;
         public static final int middle=0x7f09000b;
         public static final int model_selection_list=0x7f09003e;
         public static final int never=0x7f09000d;
@@ -880,11 +895,13 @@ containing a value of this type.
         public static final int split_action_bar=0x7f09001e;
         public static final int submit_area=0x7f090039;
         public static final int tabMode=0x7f090002;
+        public static final int text1=0x7f09004c;
+        public static final int text2=0x7f09004d;
         public static final int title=0x7f09002b;
         public static final int top_action_bar=0x7f090020;
         public static final int trListview=0x7f090040;
-        public static final int transformer_selection_list=0x7f090041;
-        public static final int turbineListView=0x7f090042;
+        public static final int transformer_selection_list=0x7f09004a;
+        public static final int turbineListView=0x7f09004b;
         public static final int up=0x7f090021;
         public static final int useLogo=0x7f090003;
         public static final int withText=0x7f090010;
@@ -923,18 +940,21 @@ containing a value of this type.
         public static final int activity_model_selection=0x7f03001b;
         public static final int activity_pipe=0x7f03001c;
         public static final int activity_tr_list=0x7f03001d;
-        public static final int activity_transformer_list=0x7f03001e;
-        public static final int activity_turbine_list=0x7f03001f;
-        public static final int support_simple_spinner_dropdown_item=0x7f030020;
+        public static final int activity_transformer_details_activity=0x7f03001e;
+        public static final int activity_transformer_list=0x7f03001f;
+        public static final int activity_turbine_list=0x7f030020;
+        public static final int row=0x7f030021;
+        public static final int support_simple_spinner_dropdown_item=0x7f030022;
     }
     public static final class menu {
         public static final int boiler_list=0x7f0e0000;
         public static final int main=0x7f0e0001;
         public static final int menu_model_selection=0x7f0e0002;
-        public static final int menu_transformer_list=0x7f0e0003;
-        public static final int pipe=0x7f0e0004;
-        public static final int tr_list=0x7f0e0005;
-        public static final int turbine_list=0x7f0e0006;
+        public static final int menu_transformer_details_activity=0x7f0e0003;
+        public static final int menu_transformer_list=0x7f0e0004;
+        public static final int pipe=0x7f0e0005;
+        public static final int tr_list=0x7f0e0006;
+        public static final int turbine_list=0x7f0e0007;
     }
     public static final class raw {
         public static final int boiler=0x7f060000;
@@ -959,17 +979,29 @@ containing a value of this type.
         public static final int account_name=0x7f0c000d;
         public static final int action_settings=0x7f0c000e;
         public static final int app_name=0x7f0c000f;
-        public static final int description_refresh=0x7f0c0010;
-        public static final int hello_blank_fragment=0x7f0c0011;
-        public static final int hello_world=0x7f0c0012;
-        public static final int loading=0x7f0c0013;
-        public static final int title_activity_boiler_list=0x7f0c0014;
-        public static final int title_activity_model_selection=0x7f0c0015;
-        public static final int title_activity_pipe=0x7f0c0016;
-        public static final int title_activity_transformer_list=0x7f0c0017;
-        public static final int title_activity_turbine_list=0x7f0c0018;
-        public static final int title_entry_detail=0x7f0c0019;
-        public static final int transformer_list_activity=0x7f0c001a;
+        public static final int description_add=0x7f0c0010;
+        public static final int description_refresh=0x7f0c0011;
+        public static final int description_save=0x7f0c0012;
+        public static final int hello_blank_fragment=0x7f0c0013;
+        public static final int hello_world=0x7f0c0014;
+        public static final int loading=0x7f0c0015;
+        public static final int title_activity_boiler_list=0x7f0c0016;
+        public static final int title_activity_model_selection=0x7f0c0017;
+        public static final int title_activity_pipe=0x7f0c0018;
+        public static final int title_activity_transformer_details_activity=0x7f0c0019;
+        public static final int title_activity_transformer_list=0x7f0c001a;
+        public static final int title_activity_turbine_list=0x7f0c001b;
+        public static final int title_entry_detail=0x7f0c001c;
+        public static final int transformer_current_temp=0x7f0c001d;
+        public static final int transformer_list_activity=0x7f0c001e;
+        public static final int transformer_location=0x7f0c001f;
+        public static final int transformer_make=0x7f0c0020;
+        public static final int transformer_name=0x7f0c0021;
+        public static final int transformer_oil_level=0x7f0c0022;
+        public static final int transformer_operating_power=0x7f0c0023;
+        public static final int transformer_type=0x7f0c0024;
+        public static final int transformer_winding_count=0x7f0c0025;
+        public static final int transformer_winding_make=0x7f0c0026;
     }
     public static final class style {
         /** 

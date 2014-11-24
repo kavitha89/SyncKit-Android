@@ -6,11 +6,20 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.android.network.sync.basicsyncadapter.util.Constants;
+
 
 public class ModelSelectionActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        System.out.println(Constants.SYNC_STATUS.CONFLICTED.getValue());
+        System.out.println(Constants.SYNC_STATUS.SYNCED.getValue());
+        System.out.println(Constants.SYNC_STATUS.DELETED.getValue());
+        System.out.println(Constants.SYNC_STATUS.DIRTY.getValue());
+        System.out.println(Constants.SYNC_STATUS.INSERTED.getValue());
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_model_selection);
     }

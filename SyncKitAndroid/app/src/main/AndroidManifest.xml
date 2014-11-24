@@ -32,7 +32,7 @@
 
         <!-- Main activity, responsible for showing a list of feed entries. -->
         <activity
-            android:name=".ModelSelectionActivity"
+            android:name="com.example.android.network.sync.basicsyncadapter.ModelSelectionActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat.Light" >
 
@@ -44,24 +44,30 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TransformersListActivity"
+            android:name="com.example.android.network.sync.basicsyncadapter.TransformersListActivity"
             android:label="@string/transformer_list_activity"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
-            android:name=".PipeListActivity"
+            android:name="com.example.android.network.sync.basicsyncadapter.PipeListActivity"
             android:label="@string/title_activity_transformer_list"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
-            android:name=".TurbineListActivity"
+            android:name="com.example.android.network.sync.basicsyncadapter.TurbineListActivity"
             android:label="@string/title_activity_turbine_list"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
-            android:name=".BoilerListActivity"
+            android:name="com.example.android.network.sync.basicsyncadapter.BoilerListActivity"
             android:label="@string/title_activity_boiler_list"
             android:theme="@style/Theme.AppCompat.Light" >
+        </activity>
+        <activity
+            android:name="com.example.android.network.sync.basicsyncadapter.Transformer_details_activity"
+            android:label="@string/title_activity_transformer_details_activity"
+            android:theme="@style/Theme.AppCompat.Light" >
+            >
         </activity>
         <!--
         ContentProvider to store feed data.
@@ -74,7 +80,7 @@
         package.
         -->
         <provider
-            android:name=".provider.FeedProvider"
+            android:name="com.example.android.network.sync.basicsyncadapter.provider.FeedProvider"
             android:authorities="com.example.android.network.sync.basicsyncadapter"
             android:exported="false" />
 
@@ -83,7 +89,7 @@
         sync framework can access it.
         -->
         <service
-            android:name=".SyncService"
+            android:name="com.example.android.network.sync.basicsyncadapter.SyncService"
             android:exported="true" >
 
             <!--
@@ -107,7 +113,7 @@
         It's also possible to attach a SyncAdapter to an existing account provided by another
         package. In that case, this element could be omitted here.
         -->
-        <service android:name=".accounts.GenericAccountService" >
+        <service android:name="com.example.android.network.sync.basicsyncadapter.accounts.GenericAccountService" >
 
             <!-- Required filter used by the system to launch our account service. -->
             <intent-filter>
@@ -118,6 +124,7 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
+
     </application>
 
 </manifest>

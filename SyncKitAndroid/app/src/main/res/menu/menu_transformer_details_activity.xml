@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.android.network.sync.basicsyncadapter.Transformer_details_activity">
+        <item android:id="@+id/menu_save_transformer_details"
+            android:icon="@drawable/ic_action_save"
+            android:title="@string/description_save"
+            android:orderInCategory="1"
+            android:showAsAction="always" />
+</menu>

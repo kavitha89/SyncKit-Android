@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView android:id="@+id/text1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dip"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        />
+
+    <TextView android:id="@+id/text2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@android:id/text1"
+        android:layout_alignLeft="@android:id/text1"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        />
+
+
+</LinearLayout><!-- From: file:/Users/Veni/Documents/BITS%20Final/Kavitha/Androidbits_Demo/SyncKitAndroid/app/src/main/res/layout/row.xml -->
