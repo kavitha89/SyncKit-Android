@@ -74,7 +74,14 @@ public class Transformer implements Parcelable{
             Transformer.KEY_SYNC_STATUS
     };
 
+
+
     private static final String FETCH_ALL_URL = "https://api.parse.com/1/classes/Transformer";
+
+    private static final String NEW_SERVER_OBJECT_URL = "https://api.parse.com/1/classes/Transformer";
+
+    private static final String UPDATE_SERVER_OBJECT_URL = "https://api.parse.com/1/classes/Transformer";
+
 
     public static String urlForFetchAll()
     {
@@ -111,12 +118,71 @@ public class Transformer implements Parcelable{
         return KEY_TRANSFORMER_ID;
     }
 
+    public static String urlForNewServerObject(){return NEW_SERVER_OBJECT_URL; }
+
+    public String urlForUpdateServerObject(){return UPDATE_SERVER_OBJECT_URL + "/" + this.transformerID; }
+
+    public String urlForDeleteServerObject(){return UPDATE_SERVER_OBJECT_URL + "/" + this.transformerID; }
+
+    public String postBodyForNewServerObject()
+    {
+
+        try {
+            JSONObject newServerObjectJSON = new JSONObject();
+            newServerObjectJSON.put(KEY_NAME, this.trsName);
+            newServerObjectJSON.put(KEY_LOCATION, this.trsLocation);
+            newServerObjectJSON.put(KEY_CURRENT_TEMP, this.trsCurrentTemp);
+            newServerObjectJSON.put(KEY_MAKE, this.trsMake);
+            newServerObjectJSON.put(KEY_OIL_LEVEL, this.trsOilLevel);
+            newServerObjectJSON.put(KEY_OPERATING_POWER, this.trsOilLevel);
+            newServerObjectJSON.put(KEY_TYPE, this.trsType);
+            newServerObjectJSON.put(KEY_WINDING_COUNT, this.trsWindingCount);
+            newServerObjectJSON.put(KEY_WINDING_MAKE, this.trsWindingMake);
+            newServerObjectJSON.put(KEY_NAME, this.trsName);
+
+            return newServerObjectJSON.toString();
+
+        }
+
+        catch (Exception ex)
+        {
+
+        }
+
+        return "";
+    }
+
+    public String postBodyForUpdateServerObject()
+    {
+        try {
+            JSONObject newServerObjectJSON = new JSONObject();
+            newServerObjectJSON.put(KEY_NAME, this.trsName);
+            newServerObjectJSON.put(KEY_LOCATION, this.trsLocation);
+            newServerObjectJSON.put(KEY_CURRENT_TEMP, this.trsCurrentTemp);
+            newServerObjectJSON.put(KEY_MAKE, this.trsMake);
+            newServerObjectJSON.put(KEY_OIL_LEVEL, this.trsOilLevel);
+            newServerObjectJSON.put(KEY_OPERATING_POWER, this.trsOilLevel);
+            newServerObjectJSON.put(KEY_TYPE, this.trsType);
+            newServerObjectJSON.put(KEY_WINDING_COUNT, this.trsWindingCount);
+            newServerObjectJSON.put(KEY_WINDING_MAKE, this.trsWindingMake);
+            newServerObjectJSON.put(KEY_NAME, this.trsName);
+
+            return newServerObjectJSON.toString();
+
+        }
+
+        catch (Exception ex)
+        {
+
+        }
+        return "";
+    }
 
     public static ArrayList<Transformer>fetchAllTransformerObjectsInDB(ContentResolver resolver)
     {
-        ArrayList<Transformer> transformers = new ArrayList<Transformer>();
 
         try {
+
 
             final ContentResolver contentResolver = resolver;
 
@@ -140,6 +206,125 @@ public class Transformer implements Parcelable{
 
             Cursor c = contentResolver.query(uri, mProjection, null, null, null);
 
+            return generateArrayFromCursor(c);
+        }
+        catch (Exception Ex)
+        {
+            Log.i(TAG,Ex.toString());
+        }
+
+        return null;
+    }
+
+    public static ArrayList<Transformer>fetchAllAvailableObjectsInDB(ContentResolver resolver)
+    {
+
+        try {
+
+            final ContentResolver contentResolver = resolver;
+
+            Uri uri = Transformer.CONTENT_URI; // Get all entries
+
+            String mSelectionClause = Transformer.KEY_SYNC_STATUS + " != ?";
+
+            String[] mSelectionArgs = {""};
+
+            mSelectionArgs[0] = Integer.toString(Constants.SYNC_STATUS.DELETED.getValue());
+
+            String[] mProjection = {
+                    Transformer.KEY_TRANSFORMER_ID,
+                    Transformer.KEY_NAME,
+                    Transformer.KEY_LOCATION,
+                    Transformer.KEY_MAKE,
+                    Transformer.KEY_CURRENT_TEMP,
+                    Transformer.KEY_OIL_LEVEL,
+                    Transformer.KEY_OPERATING_POWER,
+                    Transformer.KEY_WINDING_COUNT,
+                    Transformer.KEY_WINDING_MAKE,
+                    Transformer.KEY_TYPE,
+                    Transformer.KEY_LAST_UPDATED_TIME,
+                    Transformer.KEY_LAST_SERVER_SYNC_DATE,
+                    Transformer.KEY_SYNC_STATUS
+            };
+
+            Cursor c = contentResolver.query(uri, mProjection, mSelectionClause, mSelectionArgs, null);
+
+            return generateArrayFromCursor(c);
+        }
+        catch (Exception Ex)
+        {
+            Log.i(TAG,Ex.toString());
+        }
+
+        return null;
+    }
+
+    public static ArrayList<Transformer>fetchAllDirtyObjectsInDB(ContentResolver resolver)
+    {
+        return fetchAllTransformerObjectsInDBWithSyncStatus(resolver, Constants.SYNC_STATUS.DIRTY.getValue());
+    }
+
+    public static ArrayList<Transformer>fetchAllNewObjectsInDB(ContentResolver resolver)
+    {
+        return fetchAllTransformerObjectsInDBWithSyncStatus(resolver,Constants.SYNC_STATUS.INSERTED.getValue());
+    }
+
+    public static ArrayList<Transformer>fetchAllDeletedObjectsInDB(ContentResolver resolver)
+    {
+
+        return fetchAllTransformerObjectsInDBWithSyncStatus(resolver, Constants.SYNC_STATUS.DELETED.getValue());
+    }
+
+    public static ArrayList<Transformer>fetchAllTransformerObjectsInDBWithSyncStatus(ContentResolver resolver,int syncStatus)
+    {
+        ArrayList<Transformer> transformers = new ArrayList<Transformer>();
+
+        try {
+
+            final ContentResolver contentResolver = resolver;
+
+            Uri uri = Transformer.CONTENT_URI; // Get all entries
+
+            String mSelectionClause = Transformer.KEY_SYNC_STATUS + " = ?";
+
+            String[] mSelectionArgs = {""};
+
+            mSelectionArgs[0] = Integer.toString(syncStatus);
+
+            String[] mProjection = {
+                    Transformer.KEY_TRANSFORMER_ID,
+                    Transformer.KEY_NAME,
+                    Transformer.KEY_LOCATION,
+                    Transformer.KEY_MAKE,
+                    Transformer.KEY_CURRENT_TEMP,
+                    Transformer.KEY_OIL_LEVEL,
+                    Transformer.KEY_OPERATING_POWER,
+                    Transformer.KEY_WINDING_COUNT,
+                    Transformer.KEY_WINDING_MAKE,
+                    Transformer.KEY_TYPE,
+                    Transformer.KEY_LAST_UPDATED_TIME,
+                    Transformer.KEY_LAST_SERVER_SYNC_DATE,
+                    Transformer.KEY_SYNC_STATUS
+            };
+
+            Cursor c = contentResolver.query(uri, mProjection, mSelectionClause, mSelectionArgs, null);
+
+            return generateArrayFromCursor(c);
+        }
+        catch (Exception Ex)
+        {
+            Log.i(TAG,Ex.toString());
+        }
+
+        return null;
+    }
+
+    private static ArrayList<Transformer> generateArrayFromCursor(Cursor c)
+    {
+
+        ArrayList<Transformer> transformers = new ArrayList<Transformer>();
+
+        try {
             while (c.moveToNext()) {
                 Transformer transformer = new Transformer();
 
@@ -172,22 +357,18 @@ public class Transformer implements Parcelable{
 
                 }
 
-
-
                 transformers.add(transformer);
             }
-
-            return transformers;
         }
-        catch (Exception Ex)
+
+        catch (Exception ex)
         {
-            Log.i(TAG,Ex.toString());
+            System.out.println(ex.toString());
         }
-
-        return null;
+            return transformers;
     }
 
-    public void commitTransformerObjectToDB(ContentResolver resolver)
+    public boolean saveTransformerObjectToDB(ContentResolver resolver)
     {
         ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>();
 
@@ -213,15 +394,18 @@ public class Transformer implements Parcelable{
                     Transformer.CONTENT_URI, // URI where data was modified
                     null,                           // No local observer
                     false);
+            return true;
         }
 
         catch (Exception ex)
         {
             System.out.println(ex.toString());
         }
+
+        return false;
     }
 
-    public void updateTransformerObjectInDB(ContentResolver resolver)
+    public boolean updateTransformerObjectInDB(ContentResolver resolver)
     {
         ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>();
 
@@ -249,12 +433,15 @@ public class Transformer implements Parcelable{
                     Transformer.CONTENT_URI, // URI where data was modified
                     null,                           // No local observer
                     false);
+            return true;
         }
 
         catch (Exception ex)
         {
             System.out.println(ex.toString());
         }
+
+        return false;
     }
 
     public static void setSyncFlagForTransformerObjectWithId(String transformerID,int syncStatus, ContentResolver resolver)
@@ -462,84 +649,6 @@ public class Transformer implements Parcelable{
             }
         }
 
-        /*Cursor c = null;
-
-        try {
-
-            // Get list of all items
-            Log.i(TAG, "Fetching local entries for merge");
-            Uri uri = Transformer.CONTENT_URI; // Get all entries
-            c = contentResolver.query(uri, null, null, null, null);
-            assert c != null;
-            Log.i(TAG, "Found " + c.getCount() + " local entries. Computing merge solution...");
-        }
-
-        catch (Exception ex)
-        {
-
-        }
-        // Find stale data
-        String id;
-        String name;
-        String location;
-
-        while (c.moveToNext()) {
-            syncResult.stats.numEntries++;
-
-            id = c.getString(0);
-            name = c.getString(1);
-            location = c.getString(2);
-
-            Transformer match = entryMap.get(id);
-            if (match != null) {
-                // Entry exists. Remove from entry map to prevent insert later.
-                entryMap.remove(id);
-                // Check to see if the entry needs to be updated
-                Uri existingUri = Transformer.CONTENT_URI.buildUpon()
-                        .appendPath(id).build();
-                if ((match.trsName != null && !match.trsLocation.equals(name))) {
-                    // Update existing record
-                    Log.i(TAG, "Scheduling update: " + existingUri);
-                    batch.add(ContentProviderOperation.newUpdate(existingUri)
-                            .withValue(Transformer.KEY_NAME, name)
-                            .withValue(Transformer.KEY_LOCATION, location)
-                            .build());
-                    syncResult.stats.numUpdates++;
-                } else {
-                    Log.i(TAG, "No action: " + existingUri);
-                }
-            } else {
-                // Entry doesn't exist. Remove it from the database.
-                Uri deleteUri = Transformer.CONTENT_URI.buildUpon()
-                        .appendPath(id).build();
-                Log.i(TAG, "Scheduling delete: " + deleteUri);
-                batch.add(ContentProviderOperation.newDelete(deleteUri).build());
-                syncResult.stats.numDeletes++;
-            }
-        }
-        c.close();
-
-        // Add new items
-        for (Transformer e : entryMap.values()) {
-            Log.i(TAG, "Scheduling insert: entry_id=" + e.transformerID);
-            batch.add(ContentProviderOperation.newInsert(Transformer.CONTENT_URI)
-                    .withValue(Transformer.KEY_TRANSFORMER_ID, e.transformerID)
-                    .withValue(Transformer.KEY_NAME, e.trsName)
-                    .withValue(Transformer.KEY_LOCATION, e.trsLocation)
-                    .withValue(Transformer.KEY_CURRENT_TEMP, e.trsCurrentTemp)
-                    .withValue(Transformer.KEY_LAST_SERVER_SYNC_DATE, e.lastServerSyncDate)
-                    .withValue(Transformer.KEY_LAST_UPDATED_TIME, e.lastServerSyncDate)
-                    .withValue(Transformer.KEY_SYNC_STATUS, 0)
-                    .withValue(Transformer.KEY_MAKE, e.trsMake)
-                    .withValue(Transformer.KEY_WINDING_MAKE, e.trsWindingMake)
-                    .withValue(Transformer.KEY_WINDING_COUNT, e.trsWindingCount)
-                    .withValue(Transformer.KEY_OIL_LEVEL, e.trsOilLevel)
-                    .withValue(Transformer.KEY_OPERATING_POWER, e.trsOperatingPower)
-                    .withValue(Transformer.KEY_TYPE, e.trsType)
-
-                    .build());
-            syncResult.stats.numInserts++;
-        }*/
         Log.i(TAG, "Merge solution ready. Applying batch update");
 
         try {

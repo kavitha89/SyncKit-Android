@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.network.sync.basicsyncadapter.models.Transformer;
 import com.example.android.network.sync.basicsyncadapter.util.Constants;
@@ -92,7 +93,11 @@ public class Transformer_details_activity extends Activity {
                 this.transformerObject.trsOperatingPower = ((TextView) findViewById(R.id.edit_transformer_operating_power)).getText().toString();
                 this.transformerObject.trsType = ((TextView) findViewById(R.id.edit_transformer_type)).getText().toString();
                 this.transformerObject.syncStatus = Constants.SYNC_STATUS.INSERTED.getValue();
-                this.transformerObject.commitTransformerObjectToDB(getContentResolver());
+                if(this.transformerObject.saveTransformerObjectToDB(getContentResolver()))
+                {
+                    Toast.makeText(this, "Transformer Object Added Successfully", Toast.LENGTH_LONG).show();
+                    this.finish();
+                }
             }
 
             else
@@ -107,7 +112,11 @@ public class Transformer_details_activity extends Activity {
                 this.transformerObject.trsOperatingPower = ((TextView) findViewById(R.id.edit_transformer_operating_power)).getText().toString();
                 this.transformerObject.trsType = ((TextView) findViewById(R.id.edit_transformer_type)).getText().toString();
                 //update existing object via method in model class
-                this.transformerObject.updateTransformerObjectInDB(getContentResolver());
+                if(this.transformerObject.updateTransformerObjectInDB(getContentResolver()))
+                {
+                    Toast.makeText(this, "Transformer Object Updated Successfully", Toast.LENGTH_LONG).show();
+                    this.finish();
+                }
             }
 
         }

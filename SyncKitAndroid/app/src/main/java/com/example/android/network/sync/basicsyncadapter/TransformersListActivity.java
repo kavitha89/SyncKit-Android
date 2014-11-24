@@ -51,7 +51,7 @@ public class TransformersListActivity extends Activity implements OnItemClickLis
     private void updateData()
     {
         final ListView listview = (ListView) findViewById(R.id.trListview);
-        transformerList = Transformer.fetchAllTransformerObjectsInDB(this.getContentResolver());
+        transformerList = Transformer.fetchAllAvailableObjectsInDB(this.getContentResolver());
         TransformerListAdapter customAdapter = new TransformerListAdapter(this, R.layout.row, transformerList);
         listview .setAdapter(customAdapter);
         listview.setOnItemClickListener(this);
@@ -64,17 +64,10 @@ public class TransformersListActivity extends Activity implements OnItemClickLis
         Transformer transformerObejct = transformerList.get(position);
         if(!transformerObejct.equals(null))
         {
-            System.out.println(transformerObejct.transformerID);
-
             Intent intent = new Intent(TransformersListActivity.this, Transformer_details_activity.class);
-           // Bundle mBundle = new Bundle();
-            //mBundle.putSerializable("Transformer Object",transformerObejct);
-            //intent.putExtras(mBundle);
             intent.putExtra("Transformer Object",(Parcelable)transformerObejct);
             startActivity(intent);
         }
-        // assuming string and if you want to get the value on click of list item
-        // do what you intend to do on click of listview row
     }
      @Override
     public boolean onCreateOptionsMenu(Menu menu) {
