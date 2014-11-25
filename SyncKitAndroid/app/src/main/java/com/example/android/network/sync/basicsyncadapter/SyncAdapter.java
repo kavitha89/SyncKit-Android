@@ -32,8 +32,13 @@ import android.util.Log;
 
 import com.example.android.network.sync.basicsyncadapter.models.Boiler;
 import com.example.android.network.sync.basicsyncadapter.models.Transformer;
-import com.example.android.network.sync.basicsyncadapter.net.FeedParser;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.xmlpull.v1.XmlPullParserException;
 
 import org.json.*;
@@ -46,6 +51,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -351,7 +357,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         }
 
-        //postAllDirtyRecordsToServer(result);
+        postAllDirtyRecordsToServer(result);
     }
 
     private void downloadDeltaForAllRegisteredModels()
@@ -378,9 +384,12 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
         {
             try {
 
-                Method methodForNewlyCreatedObjects = sClass.getDeclaredMethod("fetchAllDirtyObjectsInDB",null);
+                Class[] cArg = new Class[1];
+                cArg[0] = ContentResolver.class;
 
-                ArrayList<Class> objectsToBeCreated = (ArrayList<Class>) methodForNewlyCreatedObjects.invoke(null,null);
+                Method methodForNewlyCreatedObjects = sClass.getDeclaredMethod("fetchAllDirtyObjectsInDB",cArg);
+
+                ArrayList<Object> objectsToBeCreated = (ArrayList<Object>) methodForNewlyCreatedObjects.invoke(null,mContentResolver);
 
                 for (Object obj:objectsToBeCreated)
                 {
@@ -391,7 +400,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
 
             catch (Exception ex)
             {
-
+                System.out.println(ex.toString());
             }
 
         }
@@ -408,9 +417,12 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
         {
             try {
 
-                Method methodForNewlyCreatedObjects = sClass.getDeclaredMethod("fetchAllNewObjectsInDB",null);
+                Class[] cArg = new Class[1];
+                cArg[0] = ContentResolver.class;
 
-                ArrayList<Class> objectsToBeCreated = (ArrayList<Class>) methodForNewlyCreatedObjects.invoke(null,null);
+                Method methodForNewlyCreatedObjects = sClass.getDeclaredMethod("fetchAllNewObjectsInDB",cArg);
+
+                ArrayList<Class> objectsToBeCreated = (ArrayList<Class>) methodForNewlyCreatedObjects.invoke(null,mContentResolver);
 
                 for (Object obj:objectsToBeCreated)
                 {
@@ -435,9 +447,12 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
         {
             try {
 
-                Method methodForNewlyCreatedObjects = sClass.getDeclaredMethod("fetchAllDeletedObjectsInDB",null);
+                Class[] cArg = new Class[1];
+                cArg[0] = ContentResolver.class;
 
-                ArrayList<Class> objectsToBeCreated = (ArrayList<Class>) methodForNewlyCreatedObjects.invoke(null,null);
+                Method methodForNewlyCreatedObjects = sClass.getDeclaredMethod("fetchAllDeletedObjectsInDB",cArg);
+
+                ArrayList<Class> objectsToBeCreated = (ArrayList<Class>) methodForNewlyCreatedObjects.invoke(null,mContentResolver);
 
                 for (Object obj:objectsToBeCreated)
                 {
@@ -505,44 +520,59 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
     private SyncResult createNewObjectAtServerForObject(Object obj,SyncResult sResults)
     {
         try {
-            Method methodForNewServerObject = obj.getClass().getDeclaredMethod("urlForNewServerObject", null);
-            String urlForNewServerObject = (String)methodForNewServerObject.invoke(null,null);
+            System.out.println(obj.getClass());
+            Method methodForCreateNewServerObjectURL = obj.getClass().getDeclaredMethod("urlForNewServerObject", null);
+            String urlForNewServerObject = (String)methodForCreateNewServerObjectURL.invoke(obj,null);
 
-            Method methodForpostBodyForNewServerObject = obj.getClass().getDeclaredMethod("postBodyForNewServerObject", null);
-            String postBodyForNewServerObject = (String)methodForpostBodyForNewServerObject.invoke(obj,null);
+            Method methodForPostBodyForUpdateServerObject = obj.getClass().getDeclaredMethod("postBodyForNewServerObject", null);
+            String postBodyForUpdateServerObject = (String)methodForPostBodyForUpdateServerObject.invoke(obj,null);
 
             System.out.println(urlForNewServerObject);
-            final URL fetchAllURL = new URL(urlForNewServerObject);
 
-            HttpURLConnection conn = (HttpURLConnection) fetchAllURL.openConnection();
-            conn.setRequestProperty("X-Parse-Application-Id","TsEDR12ICJtD59JM92WslVurN0wh5JPuznKvroRc");
-            conn.setRequestProperty("X-Parse-REST-API-Key", "4LC6oFNCyqLMFHSdPIPsxJoXHY6gTHGMG2kUcbwB");
-            conn.setReadTimeout(NET_READ_TIMEOUT_MILLIS /* milliseconds */);
-            conn.setConnectTimeout(NET_CONNECT_TIMEOUT_MILLIS /* milliseconds */);
-            conn.setRequestMethod("POST");
+            InputStream inputStream = null;
+            String result = "";
 
-            conn.setDoOutput(true);
-            conn.setRequestProperty("Content-Type","application/json");
-            OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
-            out.write(postBodyForNewServerObject);
-            out.flush();
-            out.close();
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(urlForNewServerObject);
+            StringEntity se = new StringEntity(postBodyForUpdateServerObject);
+            httpPost.setEntity(se);
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Content-type", "application/json");
+            httpPost.setHeader("X-Parse-Application-Id", "TsEDR12ICJtD59JM92WslVurN0wh5JPuznKvroRc");
+            httpPost.setHeader("X-Parse-REST-API-Key", "4LC6oFNCyqLMFHSdPIPsxJoXHY6gTHGMG2kUcbwB");
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+            inputStream = httpResponse.getEntity().getContent();
+            if(inputStream != null) {
+                result = convertInputStreamToString(inputStream);
+                System.out.println(result);
+                if(httpResponse.getStatusLine().getStatusCode() == 201)
+                {
+                    /*Method identificationAttributeValueMethod = obj.getClass().getDeclaredMethod("identificationAttributeValue", null);
+                    String idAttribute = (String)identificationAttributeValueMethod.invoke(obj,null);
 
-            conn.setDoInput(true);
-            // Starts the query
-            conn.connect();
-            Log.i(TAG, "Response from parse.com : " + conn.getResponseMessage());
-            Log.i(TAG, "Status Code from parse.com : " + conn.getResponseCode());
+                    Class[] cArg = new Class[2];
+                    cArg[0] = String.class;
+                    cArg[1] = ContentResolver.class;
 
-            /*Class[] cArg = new Class[3];
-            cArg[0] = ContentResolver.class;
-            cArg[1] = InputStream.class;
-            cArg[2] = SyncResult.class;
+                    Method setSyncFlagToSyncedMethod = obj.getClass().getDeclaredMethod("setObjectAsSynced", cArg);
+                    String setSynced = (String)setSyncFlagToSyncedMethod.invoke(obj,idAttribute,mContentResolver);
+                    if(setSynced.equals("1"))
+                        System.out.println("Success!!");*/
 
-            Method handleDataForModel = obj.getClass().getDeclaredMethod("handleInsertWithData", cArg);
-            SyncResult objectsUpdated = (SyncResult) handleDataForModel.invoke(null, mContentResolver,conn.getInputStream(),sResults);*/
+                    Class[] cArg = new Class[2];
+                    cArg[0] = String.class;
+                    cArg[1] = ContentResolver.class;
+
+                    Method handleInsertResponseForObjectMethod = obj.getClass().getDeclaredMethod("handleObjectCreateResponseFromServer", cArg);
+                    String setSynced = (String)handleInsertResponseForObjectMethod.invoke(obj,result,mContentResolver);
+                    if(setSynced.equals("1"))
+                        System.out.println("Success!!");
+                }
+            }
+            else
+                result = "Did not work!";
+
         }
-
         catch (Exception ex)
         {
             Log.i(TAG,"exception " + ex.toString());
@@ -554,44 +584,59 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
     private SyncResult updateObjectAtServerForObject(Object obj,SyncResult sResults)
     {
         try {
-            Method methodForUpdateServerObject = obj.getClass().getDeclaredMethod("urlForUpdateServerObject", null);
-            String urlForUpdateServerObject = (String)methodForUpdateServerObject.invoke(null,null);
+            System.out.println(obj.getClass());
+            Method methodForUpdateServerObjectURL = obj.getClass().getDeclaredMethod("urlForUpdateServerObject", null);
+            String urlForUpdateServerObject = (String)methodForUpdateServerObjectURL.invoke(obj,null);
 
             Method methodForPostBodyForUpdateServerObject = obj.getClass().getDeclaredMethod("postBodyForUpdateServerObject", null);
             String postBodyForUpdateServerObject = (String)methodForPostBodyForUpdateServerObject.invoke(obj,null);
 
             System.out.println(urlForUpdateServerObject);
-            final URL fetchAllURL = new URL(urlForUpdateServerObject);
 
-            HttpURLConnection conn = (HttpURLConnection) fetchAllURL.openConnection();
-            conn.setRequestProperty("X-Parse-Application-Id","TsEDR12ICJtD59JM92WslVurN0wh5JPuznKvroRc");
-            conn.setRequestProperty("X-Parse-REST-API-Key", "4LC6oFNCyqLMFHSdPIPsxJoXHY6gTHGMG2kUcbwB");
-            conn.setReadTimeout(NET_READ_TIMEOUT_MILLIS /* milliseconds */);
-            conn.setConnectTimeout(NET_CONNECT_TIMEOUT_MILLIS /* milliseconds */);
-            conn.setRequestMethod("PUT");
+            InputStream inputStream = null;
+            String result = "";
 
-            conn.setDoOutput(true);
-            conn.setRequestProperty("Content-Type","application/json");
-            OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
-            out.write(postBodyForUpdateServerObject);
-            out.flush();
-            out.close();
+                HttpClient httpclient = new DefaultHttpClient();
+                HttpPut httpPost = new HttpPut(urlForUpdateServerObject);
+                StringEntity se = new StringEntity(postBodyForUpdateServerObject);
+                httpPost.setEntity(se);
+                httpPost.setHeader("Accept", "application/json");
+                httpPost.setHeader("Content-type", "application/json");
+                httpPost.setHeader("X-Parse-Application-Id", "TsEDR12ICJtD59JM92WslVurN0wh5JPuznKvroRc");
+                httpPost.setHeader("X-Parse-REST-API-Key", "4LC6oFNCyqLMFHSdPIPsxJoXHY6gTHGMG2kUcbwB");
+                HttpResponse httpResponse = httpclient.execute(httpPost);
+                inputStream = httpResponse.getEntity().getContent();
+                if(inputStream != null) {
+                    result = convertInputStreamToString(inputStream);
+                    System.out.println(result);
+                    if(httpResponse.getStatusLine().getStatusCode() == 200)
+                    {
+                        /*Method identificationAttributeValueMethod = obj.getClass().getDeclaredMethod("identificationAttributeValue", null);
+                        String idAttribute = (String)identificationAttributeValueMethod.invoke(obj,null);
 
-            conn.setDoInput(true);
-            // Starts the query
-            conn.connect();
-            Log.i(TAG, "Response from parse.com : " + conn.getResponseMessage());
-            Log.i(TAG, "Status Code from parse.com : " + conn.getResponseCode());
+                        Class[] cArg = new Class[2];
+                        cArg[0] = String.class;
+                        cArg[1] = ContentResolver.class;
 
-            /*Class[] cArg = new Class[3];
-            cArg[0] = ContentResolver.class;
-            cArg[1] = InputStream.class;
-            cArg[2] = SyncResult.class;
+                        Method setSyncFlagToSyncedMethod = obj.getClass().getDeclaredMethod("setObjectAsSynced", cArg);
+                        String setSynced = (String)setSyncFlagToSyncedMethod.invoke(obj,idAttribute,mContentResolver);
+                        if(setSynced.equals("1"))
+                        System.out.println("Success!!");*/
 
-            Method handleDataForModel = obj.getClass().getDeclaredMethod("handleInsertWithData", cArg);
-            SyncResult objectsUpdated = (SyncResult) handleDataForModel.invoke(null, mContentResolver,conn.getInputStream(),sResults);*/
-        }
+                        Class[] cArg = new Class[2];
+                        cArg[0] = String.class;
+                        cArg[1] = ContentResolver.class;
 
+                        Method handleObjectUpdateResponseFromServerUpdateResponseForObjectMethod = obj.getClass().getDeclaredMethod("handleObjectUpdateResponseFromServer", cArg);
+                        String setSynced = (String)handleObjectUpdateResponseFromServerUpdateResponseForObjectMethod.invoke(obj,result,mContentResolver);
+                        if(setSynced.equals("1"))
+                            System.out.println("Success!!");
+                    }
+                }
+                else
+                    result = "Did not work!";
+
+            }
         catch (Exception ex)
         {
             Log.i(TAG,"exception " + ex.toString());
@@ -603,12 +648,12 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
     private SyncResult deleteObjectAtServerForObject(Object obj,SyncResult sResults)
     {
         try {
-            Method methodForUpdateServerObject = obj.getClass().getDeclaredMethod("urlForDeleteServerObject", null);
-            String urlForUpdateServerObject = (String)methodForUpdateServerObject.invoke(null,null);
+            Method methodForDeleteServerObject = obj.getClass().getDeclaredMethod("urlForDeleteServerObject", null);
+            String urlForDeleteServerObject = (String)methodForDeleteServerObject.invoke(obj,null);
 
 
-            System.out.println(urlForUpdateServerObject);
-            final URL fetchAllURL = new URL(urlForUpdateServerObject);
+            System.out.println(urlForDeleteServerObject);
+            final URL fetchAllURL = new URL(urlForDeleteServerObject);
 
             HttpURLConnection conn = (HttpURLConnection) fetchAllURL.openConnection();
             conn.setRequestProperty("X-Parse-Application-Id","TsEDR12ICJtD59JM92WslVurN0wh5JPuznKvroRc");
@@ -655,5 +700,17 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
         {
 
         }
+    }
+
+    private static String convertInputStreamToString(InputStream inputStream) throws IOException{
+        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+        String line = "";
+        String result = "";
+        while((line = bufferedReader.readLine()) != null)
+            result += line;
+
+        inputStream.close();
+        return result;
+
     }
 }

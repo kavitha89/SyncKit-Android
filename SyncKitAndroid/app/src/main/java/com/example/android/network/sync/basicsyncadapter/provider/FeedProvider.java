@@ -25,11 +25,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
+import com.example.android.network.sync.basicsyncadapter.models.SyncModel;
 import com.example.android.network.sync.basicsyncadapter.models.Transformer;
 import com.example.android.network.sync.basicsyncadapter.util.SelectionBuilder;
 
+import java.lang.reflect.Method;
+
 public class FeedProvider extends ContentProvider {
-    FeedDatabase mDatabaseHelper;
+    public FeedDatabase mDatabaseHelper;
 
     /**
      * Content authority for this provider.
@@ -57,8 +60,8 @@ public class FeedProvider extends ContentProvider {
      */
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
-        sUriMatcher.addURI(AUTHORITY, "results", ROUTE_ENTRIES);
-        sUriMatcher.addURI(AUTHORITY, "results/*", ROUTE_ENTRIES_ID);
+        sUriMatcher.addURI(AUTHORITY, "transformers", ROUTE_ENTRIES);
+        sUriMatcher.addURI(AUTHORITY, "transformers/*", ROUTE_ENTRIES_ID);
 
     }
 
@@ -100,7 +103,7 @@ public class FeedProvider extends ContentProvider {
             case ROUTE_ENTRIES_ID:
                 // Return a single entry, by ID.
                 String id = uri.getLastPathSegment();
-                builder.where(Transformer.KEY_TRANSFORMER_ID + "=?", id);
+                builder.where(SyncModel.KEY_CLIENT_ID + "=?", id);
             case ROUTE_ENTRIES:
                 // Return all known entries.
                 builder.table(Transformer.TABLE_NAME)
@@ -212,7 +215,7 @@ public class FeedProvider extends ContentProvider {
      * Provides access to an disk-backed, SQLite datastore which is utilized by FeedProvider. This
      * database should never be accessed by other parts of the application directly.
      */
-    static class FeedDatabase extends SQLiteOpenHelper {
+    public class FeedDatabase extends SQLiteOpenHelper {
         /** Schema version. */
         public static final int DATABASE_VERSION = 1;
         /** Filename for SQLite file. */
@@ -223,9 +226,10 @@ public class FeedProvider extends ContentProvider {
         private static final String COMMA_SEP = ",";
         /** SQL statement to create "Transformer" table. */
 
-        private static final String TRANSFORMERS_SQL_CREATE_ENTRIES =
-                "CREATE TABLE " + Transformer.TABLE_NAME + " (" +
-                        Transformer.KEY_TRANSFORMER_ID + " TEXT PRIMARY KEY," +
+        private final String TRANSFORMERS_SQL_CREATE_ENTRIES =
+                "CREATE TABLE " + Transformer.TABLE_NAME + " ( client_id" +
+                         " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        Transformer.KEY_TRANSFORMER_ID + TYPE_TEXT + COMMA_SEP +
                         Transformer.KEY_NAME + TYPE_TEXT + COMMA_SEP +
                         Transformer.KEY_LOCATION + TYPE_TEXT + COMMA_SEP +
                         Transformer.KEY_MAKE + TYPE_TEXT + COMMA_SEP +
@@ -240,7 +244,7 @@ public class FeedProvider extends ContentProvider {
                         Transformer.KEY_SYNC_STATUS + TYPE_INTEGER + ")";
 
         /** SQL statement to drop "entry" table. */
-        private static final String SQL_DELETE_ENTRIES =
+        private final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + Transformer.TABLE_NAME;
 
         public FeedDatabase(Context context) {
@@ -262,6 +266,58 @@ public class FeedProvider extends ContentProvider {
             // to simply to discard the data and start over
             db.execSQL(SQL_DELETE_ENTRIES);
             onCreate(db);
+        }
+
+        public boolean insertObject(Object obj)
+        {
+            SQLiteDatabase db = this.getWritableDatabase();
+
+            try {
+                Method getContentValuesMethod = obj.getClass().getDeclaredMethod("contentValuesForInsert", null);
+                ContentValues insertValues = (ContentValues) getContentValuesMethod.invoke(obj,null);
+
+                Method getTableNameMethod = obj.getClass().getDeclaredMethod("SQLITETableNameMethod",null);
+                String tableName = (String) getTableNameMethod.invoke(null,null);
+
+                db.insert(tableName,null,insertValues);
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                System.out.println(ex.toString());
+            }
+
+            return false;
+        }
+
+        public boolean udpateObject(Object obj)
+        {
+            SQLiteDatabase db = this.getWritableDatabase();
+
+            try {
+                Method getContentValuesMethod = obj.getClass().getDeclaredMethod("contentValuesForUpdate", null);
+                ContentValues updateValues = (ContentValues) getContentValuesMethod.invoke(obj,null);
+
+                Method getTableNameMethod = obj.getClass().getDeclaredMethod("SQLITETableNameMethod",null);
+                String tableName = (String) getTableNameMethod.invoke(null,null);
+
+                Method getColumnNameForIdentificationAttribute = obj.getClass().getDeclaredMethod("columnNameForIdentificationAttribute",null);
+                String columnName = (String) getColumnNameForIdentificationAttribute.invoke(null,null);
+
+                Method getIdentificationAttribtueValue = obj.getClass().getDeclaredMethod("identificationAttributeValue",null);
+                String idValue = (String) getColumnNameForIdentificationAttribute.invoke(obj,null);
+
+                db.update(tableName,updateValues,columnName + " = ?",new String[]{idValue});
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                System.out.println(ex.toString());
+            }
+
+            return false;
         }
     }
 }

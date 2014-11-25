@@ -97,6 +97,7 @@ public class Transformer_details_activity extends Activity {
                 {
                     Toast.makeText(this, "Transformer Object Added Successfully", Toast.LENGTH_LONG).show();
                     this.finish();
+
                 }
             }
 

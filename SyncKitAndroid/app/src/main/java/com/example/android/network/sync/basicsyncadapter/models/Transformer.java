@@ -2,6 +2,7 @@ package com.example.android.network.sync.basicsyncadapter.models;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.OperationApplicationException;
 import android.content.SyncResult;
 import android.database.Cursor;
@@ -11,6 +12,7 @@ import android.os.Parcelable;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.example.android.network.sync.basicsyncadapter.provider.FeedProvider;
 import com.example.android.network.sync.basicsyncadapter.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
@@ -30,7 +32,7 @@ import java.util.List;
 /**
  * Created by Veni on 11/10/14.
  */
-public class Transformer implements Parcelable{
+public class Transformer extends SyncModel implements Parcelable{
 
     public static final String TAG = "Transformer Model";
 
@@ -45,18 +47,18 @@ public class Transformer implements Parcelable{
 
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
-    private static final String PATH_ENTRIES = "results";
+    private static final String PATH_ENTRIES = "transformers";
 
     public static final Uri CONTENT_URI =
             BASE_CONTENT_URI.buildUpon().appendPath(PATH_ENTRIES).build();
 
     public static final String CONTENT_TYPE =
-            ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.basicsyncadapter.results";
+            ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.basicsyncadapter.transformers";
     /**
      * MIME type for individual entries.
      */
     public static final String CONTENT_ITEM_TYPE =
-            ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.basicsyncadapter.results";
+            ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.basicsyncadapter.transformers";
 
     public static final String[] PROJECTION = {
             Transformer.KEY_TRANSFORMER_ID,
@@ -81,6 +83,11 @@ public class Transformer implements Parcelable{
     private static final String NEW_SERVER_OBJECT_URL = "https://api.parse.com/1/classes/Transformer";
 
     private static final String UPDATE_SERVER_OBJECT_URL = "https://api.parse.com/1/classes/Transformer";
+
+
+    //2014-11-10T13:17:21.210Z
+    private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
 
 
     public static String urlForFetchAll()
@@ -113,12 +120,63 @@ public class Transformer implements Parcelable{
         return KEY_LAST_UPDATED_TIME;
     }
 
-    public static String columnNameForIdentificationAttribute()
+    public static String urlForNewServerObject(){return NEW_SERVER_OBJECT_URL; }
+
+    public ContentValues contentValuesForInsert()
     {
-        return KEY_TRANSFORMER_ID;
+        ContentValues values = new ContentValues();
+        values.put(KEY_NAME,this.trsName);
+        values.put(KEY_LOCATION, this.trsLocation);
+        values.put(KEY_CURRENT_TEMP, this.trsCurrentTemp);
+        values.put(KEY_MAKE, this.trsMake);
+        values.put(KEY_OIL_LEVEL, this.trsOilLevel);
+        values.put(KEY_OPERATING_POWER, this.trsOperatingPower);
+        values.put(KEY_TYPE, this.trsType);
+        values.put(KEY_WINDING_COUNT, this.trsWindingCount);
+        values.put(KEY_WINDING_MAKE, this.trsWindingMake);
+        if(this.transformerID != null)
+            values.put(KEY_TRANSFORMER_ID, this.transformerID);
+
+        if(this.lastServerSyncDate != null)
+            values.put(KEY_LAST_SERVER_SYNC_DATE, dateFormatter.format(this.lastServerSyncDate));
+
+        if(this.lastUpdatedDate != null)
+            values.put(KEY_LAST_UPDATED_TIME, dateFormatter.format(this.lastUpdatedDate));
+        values.put(KEY_SYNC_STATUS,0);
+
+        return values;
     }
 
-    public static String urlForNewServerObject(){return NEW_SERVER_OBJECT_URL; }
+    public ContentValues contentValuesForUpdate()
+    {
+        ContentValues values = new ContentValues();
+        values.put(KEY_NAME,this.trsName);
+        values.put(KEY_LOCATION, this.trsLocation);
+        values.put(KEY_CURRENT_TEMP, this.trsCurrentTemp);
+        values.put(KEY_MAKE, this.trsMake);
+        values.put(KEY_OIL_LEVEL, this.trsOilLevel);
+        values.put(KEY_OPERATING_POWER, this.trsOperatingPower);
+        values.put(KEY_TYPE, this.trsType);
+        values.put(KEY_WINDING_COUNT, this.trsWindingCount);
+        values.put(KEY_WINDING_MAKE, this.trsWindingMake);
+        if(this.transformerID != null)
+            values.put(KEY_TRANSFORMER_ID, this.transformerID);
+
+        if(this.lastServerSyncDate != null)
+            values.put(KEY_LAST_SERVER_SYNC_DATE, dateFormatter.format(this.lastServerSyncDate));
+
+        if(this.lastUpdatedDate != null)
+            values.put(KEY_LAST_UPDATED_TIME, dateFormatter.format(this.lastUpdatedDate));
+        values.put(KEY_SYNC_STATUS,0);
+
+        return values;
+    }
+
+    public String identificationAttributeValue()
+    {
+        return this.client_id;
+    }
+
 
     public String urlForUpdateServerObject(){return UPDATE_SERVER_OBJECT_URL + "/" + this.transformerID; }
 
@@ -126,19 +184,18 @@ public class Transformer implements Parcelable{
 
     public String postBodyForNewServerObject()
     {
-
         try {
+
             JSONObject newServerObjectJSON = new JSONObject();
-            newServerObjectJSON.put(KEY_NAME, this.trsName);
-            newServerObjectJSON.put(KEY_LOCATION, this.trsLocation);
-            newServerObjectJSON.put(KEY_CURRENT_TEMP, this.trsCurrentTemp);
-            newServerObjectJSON.put(KEY_MAKE, this.trsMake);
-            newServerObjectJSON.put(KEY_OIL_LEVEL, this.trsOilLevel);
-            newServerObjectJSON.put(KEY_OPERATING_POWER, this.trsOilLevel);
-            newServerObjectJSON.put(KEY_TYPE, this.trsType);
-            newServerObjectJSON.put(KEY_WINDING_COUNT, this.trsWindingCount);
-            newServerObjectJSON.put(KEY_WINDING_MAKE, this.trsWindingMake);
-            newServerObjectJSON.put(KEY_NAME, this.trsName);
+            newServerObjectJSON.put("transformerNickName", this.trsName);
+            newServerObjectJSON.put("transformerLocation", this.trsLocation);
+            newServerObjectJSON.put("transformerCurrentTemperature", this.trsCurrentTemp);
+            newServerObjectJSON.put("transformerMake", this.trsMake);
+            newServerObjectJSON.put("transformerOilLevel", this.trsOilLevel);
+            newServerObjectJSON.put("transformerOperatingPower", this.trsOperatingPower);
+            newServerObjectJSON.put("transformerType", this.trsType);
+            newServerObjectJSON.put("transformerWindingCount", this.trsWindingCount);
+            newServerObjectJSON.put("transformerWindingMake", this.trsWindingMake);
 
             return newServerObjectJSON.toString();
 
@@ -155,17 +212,17 @@ public class Transformer implements Parcelable{
     public String postBodyForUpdateServerObject()
     {
         try {
+
             JSONObject newServerObjectJSON = new JSONObject();
-            newServerObjectJSON.put(KEY_NAME, this.trsName);
-            newServerObjectJSON.put(KEY_LOCATION, this.trsLocation);
-            newServerObjectJSON.put(KEY_CURRENT_TEMP, this.trsCurrentTemp);
-            newServerObjectJSON.put(KEY_MAKE, this.trsMake);
-            newServerObjectJSON.put(KEY_OIL_LEVEL, this.trsOilLevel);
-            newServerObjectJSON.put(KEY_OPERATING_POWER, this.trsOilLevel);
-            newServerObjectJSON.put(KEY_TYPE, this.trsType);
-            newServerObjectJSON.put(KEY_WINDING_COUNT, this.trsWindingCount);
-            newServerObjectJSON.put(KEY_WINDING_MAKE, this.trsWindingMake);
-            newServerObjectJSON.put(KEY_NAME, this.trsName);
+            newServerObjectJSON.put("transformerNickName", this.trsName);
+            newServerObjectJSON.put("transformerLocation", this.trsLocation);
+            newServerObjectJSON.put("transformerCurrentTemperature", this.trsCurrentTemp);
+            newServerObjectJSON.put("transformerMake", this.trsMake);
+            newServerObjectJSON.put("transformerOilLevel", this.trsOilLevel);
+            newServerObjectJSON.put("transformerOperatingPower", this.trsOperatingPower);
+            newServerObjectJSON.put("transformerType", this.trsType);
+            newServerObjectJSON.put("transformerWindingCount", this.trsWindingCount);
+            newServerObjectJSON.put("transformerWindingMake", this.trsWindingMake);
 
             return newServerObjectJSON.toString();
 
@@ -178,11 +235,59 @@ public class Transformer implements Parcelable{
         return "";
     }
 
+    public String handleObjectUpdateResponseFromServer(String response,ContentResolver resolver)
+    {
+        try {
+            JSONObject updateResponse = new JSONObject(response);
+            if(updateResponse.has("updatedAt"))
+            {
+                //update row in db - set id and lastUpdatedDate
+                this.lastServerSyncDate = dateFormatter.parse(updateResponse.getString("updatedAt"));
+                this.lastUpdatedDate = dateFormatter.parse(updateResponse.getString("updatedAt"));
+                this.syncStatus = Constants.SYNC_STATUS.SYNCED.getValue();
+                if(this.commitObjectToDB(resolver))
+                    return "1";
+                //set sync status to Synced
+            }
+        }
+
+        catch (Exception ex)
+        {
+            System.out.println(ex.toString());
+        }
+
+        return "0";
+
+    }
+
+    public String handleObjectCreateResponseFromServer(String response,ContentResolver resolver)
+    {
+        try {
+            JSONObject updateResponse = new JSONObject(response);
+            if(updateResponse.has("objectId"))
+            {
+                //update row in db, set lastUpdated date.
+                this.transformerID = updateResponse.getString("objectId");
+                //set sync status to synced
+                this.syncStatus = Constants.SYNC_STATUS.SYNCED.getValue();
+                this.lastServerSyncDate = dateFormatter.parse(updateResponse.getString("createdAt"));
+                this.lastUpdatedDate = dateFormatter.parse(updateResponse.getString("createdAt"));
+                if(this.commitObjectToDB(resolver))
+                    return "1";
+            }
+        }
+
+        catch (Exception ex)
+        {
+            System.out.println(ex.toString());
+        }
+
+        return "0";
+    }
+
     public static ArrayList<Transformer>fetchAllTransformerObjectsInDB(ContentResolver resolver)
     {
-
         try {
-
 
             final ContentResolver contentResolver = resolver;
 
@@ -275,6 +380,38 @@ public class Transformer implements Parcelable{
         return fetchAllTransformerObjectsInDBWithSyncStatus(resolver, Constants.SYNC_STATUS.DELETED.getValue());
     }
 
+    public static String setObjectAsSynced(String objectID, ContentResolver resolver)
+    {
+        if(setSyncFlagForTransformerObjectWithId(objectID, Constants.SYNC_STATUS.SYNCED.getValue(),resolver))
+            return "1";
+        else
+            return "0";
+    }
+
+    public static String setObjectAsDirty(String objectID, ContentResolver resolver)
+    {
+        if(setSyncFlagForTransformerObjectWithId(objectID, Constants.SYNC_STATUS.DIRTY.getValue(),resolver))
+            return "1";
+        else
+            return "0";
+    }
+
+    public static String setObjectAsConflicted(String objectID, ContentResolver resolver)
+    {
+        if(setSyncFlagForTransformerObjectWithId(objectID, Constants.SYNC_STATUS.CONFLICTED.getValue(),resolver))
+            return "1";
+        else
+            return "0";
+    }
+
+    public static String setObjectAsNew(String objectID, ContentResolver resolver)
+    {
+        if(setSyncFlagForTransformerObjectWithId(objectID, Constants.SYNC_STATUS.INSERTED.getValue(),resolver))
+            return "1";
+        else
+            return "0";
+    }
+
     public static ArrayList<Transformer>fetchAllTransformerObjectsInDBWithSyncStatus(ContentResolver resolver,int syncStatus)
     {
         ArrayList<Transformer> transformers = new ArrayList<Transformer>();
@@ -340,8 +477,6 @@ public class Transformer implements Parcelable{
                 transformer.trsType = c.getString(9);
                 transformer.syncStatus = c.getInt(12);
 
-                //2014-11-10T13:17:21.210Z
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
                 /* TODO read as dates. */
 
@@ -349,10 +484,15 @@ public class Transformer implements Parcelable{
                 if (!c.isNull(10)) {
 
                     System.out.println(c.getType(10));
-                    System.out.println(c.getString(11));
-                    Date date = formatter.parse(c.getString(10));
+                    Date date = dateFormatter.parse(c.getString(10));
                     transformer.lastUpdatedDate = date;
-                    date = formatter.parse(c.getString(11));
+
+                }
+
+                if (!c.isNull(11)) {
+
+                    System.out.println(c.getString(11));
+                    Date date = dateFormatter.parse(c.getString(11));
                     transformer.lastServerSyncDate = date;
 
                 }
@@ -372,14 +512,55 @@ public class Transformer implements Parcelable{
     {
         ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>();
 
+        Date currentDate = new Date();
+
         batch.add(ContentProviderOperation.newInsert(Transformer.CONTENT_URI)
-                .withValue(Transformer.KEY_TRANSFORMER_ID, this.transformerID)
                 .withValue(Transformer.KEY_NAME, this.trsName)
                 .withValue(Transformer.KEY_LOCATION, this.trsLocation)
                 .withValue(Transformer.KEY_CURRENT_TEMP, this.trsCurrentTemp)
-                .withValue(Transformer.KEY_LAST_SERVER_SYNC_DATE, this.lastServerSyncDate)
-                .withValue(Transformer.KEY_LAST_UPDATED_TIME, this.lastServerSyncDate)
+                .withValue(Transformer.KEY_LAST_UPDATED_TIME, dateFormatter.format(currentDate))
                 .withValue(Transformer.KEY_SYNC_STATUS, Constants.SYNC_STATUS.INSERTED.getValue())
+                .withValue(Transformer.KEY_MAKE, this.trsMake)
+                .withValue(Transformer.KEY_WINDING_MAKE, this.trsWindingMake)
+                .withValue(Transformer.KEY_WINDING_COUNT, this.trsWindingCount)
+                .withValue(Transformer.KEY_OIL_LEVEL, this.trsOilLevel)
+                .withValue(Transformer.KEY_OPERATING_POWER, this.trsOperatingPower)
+                .withValue(Transformer.KEY_TYPE, this.trsType)
+                .build());
+        try {
+
+            resolver.applyBatch(Transformer.CONTENT_AUTHORITY, batch);
+            resolver.notifyChange(
+                    Transformer.CONTENT_URI, // URI where data was modified
+                    null,                           // No local observer
+                    false);
+            return true;
+        }
+
+        catch (Exception ex)
+        {
+            System.out.println(ex.toString());
+        }
+
+        return false;
+    }
+
+    public boolean commitObjectToDB(ContentResolver resolver)
+    {
+        ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>();
+
+        Date currentDate = new Date();
+
+        Uri existingUri = Transformer.CONTENT_URI.buildUpon()
+                .appendPath(this.transformerID).build();
+
+        batch.add(ContentProviderOperation.newUpdate(existingUri)
+                .withValue(Transformer.KEY_NAME, this.trsName)
+                .withValue(Transformer.KEY_LOCATION, this.trsLocation)
+                .withValue(Transformer.KEY_CURRENT_TEMP, this.trsCurrentTemp)
+                .withValue(Transformer.KEY_LAST_SERVER_SYNC_DATE, dateFormatter.format(this.lastServerSyncDate))
+                .withValue(Transformer.KEY_LAST_UPDATED_TIME, dateFormatter.format(currentDate))
+                .withValue(Transformer.KEY_SYNC_STATUS, this.syncStatus)
                 .withValue(Transformer.KEY_MAKE, this.trsMake)
                 .withValue(Transformer.KEY_WINDING_MAKE, this.trsWindingMake)
                 .withValue(Transformer.KEY_WINDING_COUNT, this.trsWindingCount)
@@ -409,16 +590,21 @@ public class Transformer implements Parcelable{
     {
         ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>();
 
+        int sync_flag = this.syncStatus==Constants.SYNC_STATUS.INSERTED.getValue()?Constants.SYNC_STATUS.INSERTED.getValue():Constants.SYNC_STATUS.DIRTY.getValue();
+
         Uri existingUri = Transformer.CONTENT_URI.buildUpon()
                 .appendPath(this.transformerID).build();
         Log.i(TAG, "Scheduling update: " + existingUri);
+
+        Date currentDate = new Date();
+
         batch.add(ContentProviderOperation.newUpdate(existingUri)
                 .withValue(Transformer.KEY_NAME, this.trsName)
                 .withValue(Transformer.KEY_LOCATION, this.trsLocation)
                 .withValue(Transformer.KEY_CURRENT_TEMP, this.trsCurrentTemp)
-                .withValue(Transformer.KEY_LAST_SERVER_SYNC_DATE, this.lastServerSyncDate)
-                .withValue(Transformer.KEY_LAST_UPDATED_TIME, this.lastServerSyncDate)
-                .withValue(Transformer.KEY_SYNC_STATUS, Constants.SYNC_STATUS.DIRTY.getValue())
+                .withValue(Transformer.KEY_LAST_SERVER_SYNC_DATE, dateFormatter.format(this.lastServerSyncDate))
+                .withValue(Transformer.KEY_LAST_UPDATED_TIME, dateFormatter.format(currentDate))
+                .withValue(Transformer.KEY_SYNC_STATUS, sync_flag)
                 .withValue(Transformer.KEY_MAKE, this.trsMake)
                 .withValue(Transformer.KEY_WINDING_MAKE, this.trsWindingMake)
                 .withValue(Transformer.KEY_WINDING_COUNT, this.trsWindingCount)
@@ -444,7 +630,7 @@ public class Transformer implements Parcelable{
         return false;
     }
 
-    public static void setSyncFlagForTransformerObjectWithId(String transformerID,int syncStatus, ContentResolver resolver)
+    public static boolean setSyncFlagForTransformerObjectWithId(String transformerID,int syncStatus, ContentResolver resolver)
     {
         ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>();
 
@@ -461,6 +647,7 @@ public class Transformer implements Parcelable{
                     Transformer.CONTENT_URI, // URI where data was modified
                     null,                           // No local observer
                     false);
+            return true;
         }
 
         catch (Exception ex)
@@ -468,6 +655,7 @@ public class Transformer implements Parcelable{
             System.out.println(ex.toString());
         }
 
+        return false;
     }
 
 
@@ -596,6 +784,9 @@ public class Transformer implements Parcelable{
 
             //entryMap.put(e.transformerID, e);
 
+            FeedProvider feedProvider = new FeedProvider();
+            feedProvider.mDatabaseHelper.insertObject(e);
+
             if(isTransformerObjectWithIDExistsInArray(transformerListFromDB, e.transformerID))
             {
                 //update the objects with sync_status = 0, else leave for now
@@ -611,8 +802,8 @@ public class Transformer implements Parcelable{
                                 .withValue(Transformer.KEY_NAME, e.trsName)
                                 .withValue(Transformer.KEY_LOCATION, e.trsLocation)
                                 .withValue(Transformer.KEY_CURRENT_TEMP, e.trsCurrentTemp)
-                                .withValue(Transformer.KEY_LAST_SERVER_SYNC_DATE, e.lastServerSyncDate)
-                                .withValue(Transformer.KEY_LAST_UPDATED_TIME, e.lastServerSyncDate)
+                                .withValue(Transformer.KEY_LAST_SERVER_SYNC_DATE, dateFormatter.format(e.lastServerSyncDate))
+                                .withValue(Transformer.KEY_LAST_UPDATED_TIME, dateFormatter.format(e.lastServerSyncDate))
                                 .withValue(Transformer.KEY_SYNC_STATUS, Constants.SYNC_STATUS.SYNCED.getValue())
                                 .withValue(Transformer.KEY_MAKE, e.trsMake)
                                 .withValue(Transformer.KEY_WINDING_MAKE, e.trsWindingMake)
@@ -635,8 +826,8 @@ public class Transformer implements Parcelable{
                         .withValue(Transformer.KEY_NAME, e.trsName)
                         .withValue(Transformer.KEY_LOCATION, e.trsLocation)
                         .withValue(Transformer.KEY_CURRENT_TEMP, e.trsCurrentTemp)
-                        .withValue(Transformer.KEY_LAST_SERVER_SYNC_DATE, e.lastServerSyncDate)
-                        .withValue(Transformer.KEY_LAST_UPDATED_TIME, e.lastServerSyncDate)
+                        .withValue(Transformer.KEY_LAST_SERVER_SYNC_DATE, dateFormatter.format(e.lastServerSyncDate))
+                        .withValue(Transformer.KEY_LAST_UPDATED_TIME, dateFormatter.format(e.lastServerSyncDate))
                         .withValue(Transformer.KEY_SYNC_STATUS, Constants.SYNC_STATUS.SYNCED.getValue())
                         .withValue(Transformer.KEY_MAKE, e.trsMake)
                         .withValue(Transformer.KEY_WINDING_MAKE, e.trsWindingMake)
@@ -698,7 +889,7 @@ public class Transformer implements Parcelable{
     }
 
 
-    public static String TABLE_NAME = "Transformers";
+    public static String TABLE_NAME = "transformers";
     public static String KEY_NAME = "trsName";
     public static String KEY_LOCATION = "trsLocation";
     public static String KEY_CURRENT_TEMP = "transformerCurrentTemperature";
@@ -736,7 +927,8 @@ public class Transformer implements Parcelable{
             this.trsWindingCount = jsonObject.getString("transformerWindingCount");
             this.trsWindingMake = jsonObject.getString("transformerWindingMake");
             this.transformerID = jsonObject.getString("objectId");
-            //this.lastServerSyncDate = jsonObject.getString("lastUpdatedAt");
+            this.lastServerSyncDate = dateFormatter.parse(jsonObject.getString("updatedAt"));
+            this.lastUpdatedDate = dateFormatter.parse(jsonObject.getString("updatedAt"));
         }
 
         catch (Exception ex)
@@ -745,7 +937,7 @@ public class Transformer implements Parcelable{
         }
     }
 
-    @SerializedName("lastUpdatedAt")
+    @SerializedName("updatedAt")
     public Date lastServerSyncDate;
 
     //additional values for sync

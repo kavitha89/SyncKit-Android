@@ -6,19 +6,24 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.android.network.sync.basicsyncadapter.models.Transformer;
+import com.example.android.network.sync.basicsyncadapter.provider.SyncDatabaseHelper;
 import com.example.android.network.sync.basicsyncadapter.util.Constants;
+
+import java.util.ArrayList;
 
 
 public class ModelSelectionActivity extends FragmentActivity {
 
+    SyncDatabaseHelper dbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        System.out.println(Constants.SYNC_STATUS.CONFLICTED.getValue());
-        System.out.println(Constants.SYNC_STATUS.SYNCED.getValue());
-        System.out.println(Constants.SYNC_STATUS.DELETED.getValue());
-        System.out.println(Constants.SYNC_STATUS.DIRTY.getValue());
-        System.out.println(Constants.SYNC_STATUS.INSERTED.getValue());
+        dbHelper = new SyncDatabaseHelper(getApplicationContext());
+
+        dbHelper.modelsRegisteredForSync = new ArrayList<Class>();
+        dbHelper.modelsRegisteredForSync.add(Transformer.class);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_model_selection);
