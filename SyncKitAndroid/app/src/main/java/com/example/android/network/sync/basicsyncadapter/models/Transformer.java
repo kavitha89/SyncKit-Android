@@ -76,7 +76,29 @@ public class Transformer extends SyncModel implements Parcelable{
             Transformer.KEY_SYNC_STATUS
     };
 
+    private static final String TYPE_TEXT = " TEXT";
+    private static final String TYPE_INTEGER = " INTEGER";
+    private static final String COMMA_SEP = ",";
 
+    private static final String TRANSFORMERS_SQL_CREATE_ENTRIES =
+            "CREATE TABLE " + Transformer.TABLE_NAME + " ( client_id" +
+                    " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    Transformer.KEY_TRANSFORMER_ID + TYPE_TEXT + COMMA_SEP +
+                    Transformer.KEY_NAME + TYPE_TEXT + COMMA_SEP +
+                    Transformer.KEY_LOCATION + TYPE_TEXT + COMMA_SEP +
+                    Transformer.KEY_MAKE + TYPE_TEXT + COMMA_SEP +
+                    Transformer.KEY_CURRENT_TEMP + TYPE_TEXT + COMMA_SEP +
+                    Transformer.KEY_OIL_LEVEL + TYPE_TEXT + COMMA_SEP +
+                    Transformer.KEY_OPERATING_POWER + TYPE_TEXT + COMMA_SEP +
+                    Transformer.KEY_WINDING_COUNT + TYPE_TEXT + COMMA_SEP +
+                    Transformer.KEY_WINDING_MAKE + TYPE_TEXT + COMMA_SEP +
+                    Transformer.KEY_TYPE + TYPE_TEXT + COMMA_SEP +
+                    Transformer.KEY_LAST_UPDATED_TIME + TYPE_TEXT + COMMA_SEP +
+                    Transformer.KEY_LAST_SERVER_SYNC_DATE + TYPE_TEXT + COMMA_SEP +
+                    Transformer.KEY_SYNC_STATUS + TYPE_INTEGER + ")";
+
+    private static final String SQL_DELETE_ENTRIES =
+            "DROP TABLE IF EXISTS " + Transformer.TABLE_NAME;
 
     private static final String FETCH_ALL_URL = "https://api.parse.com/1/classes/Transformer";
 
@@ -84,10 +106,8 @@ public class Transformer extends SyncModel implements Parcelable{
 
     private static final String UPDATE_SERVER_OBJECT_URL = "https://api.parse.com/1/classes/Transformer";
 
-
     //2014-11-10T13:17:21.210Z
     private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
 
 
     public static String urlForFetchAll()
@@ -121,6 +141,13 @@ public class Transformer extends SyncModel implements Parcelable{
     }
 
     public static String urlForNewServerObject(){return NEW_SERVER_OBJECT_URL; }
+
+    public static String SQLITETableNameMethod(){ return  TABLE_NAME;}
+
+    public static String createTableQuery(){return TRANSFORMERS_SQL_CREATE_ENTRIES; }
+
+    public static String deleteTableQuery(){return SQL_DELETE_ENTRIES; }
+
 
     public ContentValues contentValuesForInsert()
     {
@@ -787,7 +814,7 @@ public class Transformer extends SyncModel implements Parcelable{
             FeedProvider feedProvider = new FeedProvider();
             feedProvider.mDatabaseHelper.insertObject(e);
 
-            if(isTransformerObjectWithIDExistsInArray(transformerListFromDB, e.transformerID))
+            /*if(isTransformerObjectWithIDExistsInArray(transformerListFromDB, e.transformerID))
             {
                 //update the objects with sync_status = 0, else leave for now
                 System.out.println("Yes Object Exists");
@@ -853,6 +880,7 @@ public class Transformer extends SyncModel implements Parcelable{
         catch (Exception ex)
         {
             System.out.println(ex.toString());
+        }*/
         }
                        // IMPORTANT: Do not sync to network
         // This sample doesn't support uploads, but if *your* code does, make sure you set

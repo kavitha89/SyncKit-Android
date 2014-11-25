@@ -2,6 +2,7 @@ package com.example.android.network.sync.basicsyncadapter.provider;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -26,43 +27,68 @@ public class SyncDatabaseHelper extends SQLiteOpenHelper {
 
     public ArrayList<Class> modelsRegisteredForSync;
 
-    private final String TRANSFORMERS_SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + Transformer.TABLE_NAME + " ( client_id" +
-                    " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    Transformer.KEY_TRANSFORMER_ID + TYPE_TEXT + COMMA_SEP +
-                    Transformer.KEY_NAME + TYPE_TEXT + COMMA_SEP +
-                    Transformer.KEY_LOCATION + TYPE_TEXT + COMMA_SEP +
-                    Transformer.KEY_MAKE + TYPE_TEXT + COMMA_SEP +
-                    Transformer.KEY_CURRENT_TEMP + TYPE_TEXT + COMMA_SEP +
-                    Transformer.KEY_OIL_LEVEL + TYPE_TEXT + COMMA_SEP +
-                    Transformer.KEY_OPERATING_POWER + TYPE_TEXT + COMMA_SEP +
-                    Transformer.KEY_WINDING_COUNT + TYPE_TEXT + COMMA_SEP +
-                    Transformer.KEY_WINDING_MAKE + TYPE_TEXT + COMMA_SEP +
-                    Transformer.KEY_TYPE + TYPE_TEXT + COMMA_SEP +
-                    Transformer.KEY_LAST_UPDATED_TIME + TYPE_TEXT + COMMA_SEP +
-                    Transformer.KEY_LAST_SERVER_SYNC_DATE + TYPE_TEXT + COMMA_SEP +
-                    Transformer.KEY_SYNC_STATUS + TYPE_INTEGER + ")";
+    public SQLiteDatabase databaseObject;
 
-    /** SQL statement to drop "entry" table. */
-    private final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS " + Transformer.TABLE_NAME;
+    private static SyncDatabaseHelper singleton;
+    private Context context;
+
+    public static SyncDatabaseHelper getDataHelper(Context context) {
+        if (singleton == null) {
+            singleton = new SyncDatabaseHelper(context);
+        }
+        if(!singleton.databaseObject.isOpen()){
+            SyncDatabaseHelper openHelper = new SyncDatabaseHelper(singleton.context);
+            singleton.databaseObject = openHelper.getWritableDatabase();
+        }
+        singleton.context = context;
+        return singleton;
+    }
+
 
     public SyncDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        context = context;
+        modelsRegisteredForSync = new ArrayList<Class>();
+        modelsRegisteredForSync.add(Transformer.class);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //create all tables
-        db.execSQL(TRANSFORMERS_SQL_CREATE_ENTRIES);
+
+        try {
+            for (Class sClass : modelsRegisteredForSync) {
+                Method methodToGetCreateQueryOfClass = sClass.getDeclaredMethod("createTableQuery", null);
+                String createTableQuery = (String) methodToGetCreateQueryOfClass.invoke(null,null);
+                //create all tables
+                db.execSQL(createTableQuery);
+            }
+        }
+
+        catch (Exception ex)
+        {
+            System.out.println(ex.toString());
+        }
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // This database is only a cache for online data, so its upgrade policy is
-        // to simply to discard the data and start over
-        db.execSQL(SQL_DELETE_ENTRIES);
-        onCreate(db);
+
+        try {
+            for (Class sClass : modelsRegisteredForSync) {
+                Method methodToGetCreateQueryOfClass = sClass.getDeclaredMethod("deleteTableQuery", null);
+                String deleteTableQuery = (String) methodToGetCreateQueryOfClass.invoke(null, null);
+                //delete all old tables
+                db.execSQL(deleteTableQuery);
+            }
+        }
+
+        catch (Exception ex)
+        {
+            System.out.println(ex.toString());
+        }
+            onCreate(db);
+
     }
 
     public boolean insertObject(Object obj)
@@ -115,6 +141,25 @@ public class SyncDatabaseHelper extends SQLiteOpenHelper {
         }
 
         return false;
+    }
+
+    public Cursor selectAllObjectsOfClass(Class sClass)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = null;
+
+        try {
+            Method getTableNameMethod = sClass.getDeclaredMethod("SQLITETableNameMethod",null);
+            String tableName = (String) getTableNameMethod.invoke(null,null);
+            c = db.rawQuery("SELECT  * FROM " + tableName,null);
+            return c;
+        }
+        catch(Exception ex)
+        {
+            System.out.println(ex.toString());
+        }
+
+        return c;
     }
 
 }

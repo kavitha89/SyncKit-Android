@@ -22,9 +22,6 @@ public class ModelSelectionActivity extends FragmentActivity {
 
         dbHelper = new SyncDatabaseHelper(getApplicationContext());
 
-        dbHelper.modelsRegisteredForSync = new ArrayList<Class>();
-        dbHelper.modelsRegisteredForSync.add(Transformer.class);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_model_selection);
     }
