@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.android.network.sync.basicsyncadapter.models.Transformer;
+import com.example.android.network.sync.basicsyncadapter.util.Constants;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -30,26 +31,39 @@ public class SyncDatabaseHelper extends SQLiteOpenHelper {
     public SQLiteDatabase databaseObject;
 
     private static SyncDatabaseHelper singleton;
-    private Context context;
+    private Context mContext;
 
-    public static SyncDatabaseHelper getDataHelper(Context context) {
+    public static synchronized SyncDatabaseHelper getDataHelper(Context context,ArrayList<Class> modelsForSync) {
+        if (singleton == null) {
+            singleton = new SyncDatabaseHelper(context,modelsForSync);
+        }
+
+        singleton.mContext = context;
+        return singleton;
+    }
+
+    public static synchronized SyncDatabaseHelper getDataHelper(Context context) {
         if (singleton == null) {
             singleton = new SyncDatabaseHelper(context);
         }
-        if(!singleton.databaseObject.isOpen()){
-            SyncDatabaseHelper openHelper = new SyncDatabaseHelper(singleton.context);
-            singleton.databaseObject = openHelper.getWritableDatabase();
-        }
-        singleton.context = context;
+
+        singleton.mContext = context;
         return singleton;
     }
 
 
     public SyncDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        context = context;
-        modelsRegisteredForSync = new ArrayList<Class>();
-        modelsRegisteredForSync.add(Transformer.class);
+        this.mContext = context;
+
+    }
+
+    public SyncDatabaseHelper(Context context,ArrayList<Class> modelsForSync)
+    {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.mContext = context;
+        this.modelsRegisteredForSync = modelsForSync;
+
     }
 
     @Override
@@ -102,9 +116,16 @@ public class SyncDatabaseHelper extends SQLiteOpenHelper {
             Method getTableNameMethod = obj.getClass().getDeclaredMethod("SQLITETableNameMethod",null);
             String tableName = (String) getTableNameMethod.invoke(null,null);
 
-            db.insert(tableName,null,insertValues);
+            long result = db.insert(tableName,null,insertValues);
 
-            return true;
+            Cursor c = selectAllObjectsOfClass(obj.getClass());
+
+                    while(c.moveToNext())
+                    {
+                        System.out.println(c.getInt(1));
+                    }
+
+            return result==-1?false:true;
         }
         catch(Exception ex)
         {
@@ -125,15 +146,39 @@ public class SyncDatabaseHelper extends SQLiteOpenHelper {
             Method getTableNameMethod = obj.getClass().getDeclaredMethod("SQLITETableNameMethod",null);
             String tableName = (String) getTableNameMethod.invoke(null,null);
 
-            Method getColumnNameForIdentificationAttribute = obj.getClass().getDeclaredMethod("columnNameForIdentificationAttribute",null);
-            String columnName = (String) getColumnNameForIdentificationAttribute.invoke(null,null);
+            Method getIdentificationAttribtueValue = obj.getClass().getDeclaredMethod("identificationAttributeValue",null);
+            Integer idValue = (Integer) getIdentificationAttribtueValue.invoke(obj,null);
+
+            String whereClause = "client_id" + " = ?";
+
+            String arr[] =  {idValue.toString()};
+
+            int update = db.update(tableName,updateValues,whereClause,arr);
+
+            return update>0?true:false;
+        }
+        catch(Exception ex)
+        {
+            System.out.println(ex.toString());
+        }
+
+        return false;
+    }
+
+    public boolean deletObject(Object obj)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            Method getTableNameMethod = obj.getClass().getDeclaredMethod("SQLITETableNameMethod",null);
+            String tableName = (String) getTableNameMethod.invoke(null,null);
 
             Method getIdentificationAttribtueValue = obj.getClass().getDeclaredMethod("identificationAttributeValue",null);
-            String idValue = (String) getColumnNameForIdentificationAttribute.invoke(obj,null);
+            Integer idValue = (Integer) getIdentificationAttribtueValue.invoke(obj,null);
 
-            db.update(tableName,updateValues,columnName + " = ?",new String[]{idValue});
+            int update = db.delete(tableName,"client_id" + " = ?",new String[]{idValue.toString()});
 
-            return true;
+            return update>0?true:false;
         }
         catch(Exception ex)
         {
@@ -152,6 +197,72 @@ public class SyncDatabaseHelper extends SQLiteOpenHelper {
             Method getTableNameMethod = sClass.getDeclaredMethod("SQLITETableNameMethod",null);
             String tableName = (String) getTableNameMethod.invoke(null,null);
             c = db.rawQuery("SELECT  * FROM " + tableName,null);
+            return c;
+        }
+        catch(Exception ex)
+        {
+            System.out.println(ex.toString());
+        }
+
+        return c;
+    }
+
+    public Cursor selectObjectsOfClassWithSyncFlag(Class sClass,Integer syncFlag)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = null;
+
+        try {
+
+            Method columnNameForSyncFlag = sClass.getDeclaredMethod("columnNameForSyncFlag",null);
+            String columnNameSync = (String) columnNameForSyncFlag.invoke(null,null);
+
+            Method getTableNameMethod = sClass.getDeclaredMethod("SQLITETableNameMethod",null);
+            String tableName = (String) getTableNameMethod.invoke(null,null);
+            c = db.rawQuery("SELECT  * FROM " + tableName + " WHERE " + columnNameSync +  " = " + syncFlag.toString(),null);
+            return c;
+        }
+        catch(Exception ex)
+        {
+            System.out.println(ex.toString());
+        }
+
+        return c;
+    }
+
+    public Cursor selectAllDirtyObjectsForClass(Class sClass)
+    {
+        return selectObjectsOfClassWithSyncFlag(sClass, Constants.SYNC_STATUS.DIRTY.getValue());
+    }
+
+    public Cursor selectAllInsertedObjectsForClass(Class sClass)
+    {
+        return selectObjectsOfClassWithSyncFlag(sClass, Constants.SYNC_STATUS.INSERTED.getValue());
+    }
+
+    public Cursor selectAllDeletedObjectsForClass(Class sClass)
+    {
+        return selectObjectsOfClassWithSyncFlag(sClass, Constants.SYNC_STATUS.DELETED.getValue());
+    }
+
+    public Cursor selectAllConflictedObjectsForClass(Class sClass)
+    {
+        return selectObjectsOfClassWithSyncFlag(sClass, Constants.SYNC_STATUS.CONFLICTED.getValue());
+    }
+
+    public Cursor selectAllObjectsToDisplay(Class sClass)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = null;
+
+        try {
+
+            Method columnNameForSyncFlag = sClass.getDeclaredMethod("columnNameForSyncFlag",null);
+            String columnNameSync = (String) columnNameForSyncFlag.invoke(null,null);
+
+            Method getTableNameMethod = sClass.getDeclaredMethod("SQLITETableNameMethod",null);
+            String tableName = (String) getTableNameMethod.invoke(null,null);
+            c = db.rawQuery("SELECT  * FROM " + tableName + " WHERE " + columnNameSync +  " != 2 " ,null);
             return c;
         }
         catch(Exception ex)

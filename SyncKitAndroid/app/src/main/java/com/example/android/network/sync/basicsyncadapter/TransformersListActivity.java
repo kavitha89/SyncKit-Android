@@ -51,7 +51,7 @@ public class TransformersListActivity extends Activity implements OnItemClickLis
     private void updateData()
     {
         final ListView listview = (ListView) findViewById(R.id.trListview);
-        transformerList = Transformer.fetchAllAvailableObjectsInDB(this.getContentResolver());
+        transformerList = Transformer.fetchAllAvailableObjectsInDB(getApplicationContext());
         TransformerListAdapter customAdapter = new TransformerListAdapter(this, R.layout.row, transformerList);
         listview .setAdapter(customAdapter);
         listview.setOnItemClickListener(this);

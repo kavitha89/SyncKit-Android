@@ -20,10 +20,23 @@ public class ModelSelectionActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        dbHelper = new SyncDatabaseHelper(getApplicationContext());
+        try {
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_model_selection);
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_model_selection);
+
+            ArrayList<Class> modelsRegisteredForSync = new ArrayList<Class>();
+            modelsRegisteredForSync.add(Transformer.class);
+            dbHelper = SyncDatabaseHelper.getDataHelper(getApplicationContext(),modelsRegisteredForSync);
+            dbHelper.getWritableDatabase();
+
+        }
+
+        catch (Exception ex)
+        {
+            System.out.println(ex.toString());
+        }
+
     }
 
 

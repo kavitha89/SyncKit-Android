@@ -9,7 +9,7 @@ public class SyncModel {
 
     public String TABLE_NAME = "";
 
-    public String client_id;
+    public int client_id;
 
     public static String columnNameForIdentificationAttribute()
     {

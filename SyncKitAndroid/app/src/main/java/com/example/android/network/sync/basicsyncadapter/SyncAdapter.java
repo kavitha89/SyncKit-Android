@@ -500,12 +500,12 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
             Log.i(TAG, "Status Code from parse.com : " + conn.getResponseCode());
 
             Class[] cArg = new Class[3];
-            cArg[0] = ContentResolver.class;
+            cArg[0] = Context.class;
             cArg[1] = InputStream.class;
             cArg[2] = SyncResult.class;
 
             Method handleDataForModel = sClass.getDeclaredMethod("handleInsertWithData", cArg);
-            SyncResult objectsUpdated = (SyncResult) handleDataForModel.invoke(null, mContentResolver,conn.getInputStream(),sResults);
+            SyncResult objectsUpdated = (SyncResult) handleDataForModel.invoke(null, this.getContext(),conn.getInputStream(),sResults);
             return objectsUpdated;
         }
 
