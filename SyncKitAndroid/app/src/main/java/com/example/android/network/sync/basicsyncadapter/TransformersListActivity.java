@@ -81,7 +81,7 @@ public class TransformersListActivity extends Activity implements OnItemClickLis
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Transformer transformerObject = (Transformer)transformerList.get(position);
-                transformerObject.deleteTransformerObject(getApplicationContext());
+                transformerObject.deleteObject(getApplicationContext());
                 transformerList.remove(position);
                 transformerListAdapter.notifyDataSetChanged();
                 dialog.dismiss();

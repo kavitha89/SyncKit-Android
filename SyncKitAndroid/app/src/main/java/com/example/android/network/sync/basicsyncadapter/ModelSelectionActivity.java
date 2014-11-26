@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.android.network.sync.basicsyncadapter.models.Boiler;
 import com.example.android.network.sync.basicsyncadapter.models.Transformer;
 import com.example.android.network.sync.basicsyncadapter.provider.SyncDatabaseHelper;
 import com.example.android.network.sync.basicsyncadapter.util.Constants;
@@ -27,6 +28,7 @@ public class ModelSelectionActivity extends FragmentActivity {
 
             ArrayList<Class> modelsRegisteredForSync = new ArrayList<Class>();
             modelsRegisteredForSync.add(Transformer.class);
+            modelsRegisteredForSync.add(Boiler.class);
             dbHelper = SyncDatabaseHelper.getDataHelper(getApplicationContext(),modelsRegisteredForSync);
             dbHelper.getWritableDatabase();
 

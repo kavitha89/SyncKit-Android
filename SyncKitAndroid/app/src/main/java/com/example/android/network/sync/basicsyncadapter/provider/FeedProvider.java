@@ -215,6 +215,7 @@ public class FeedProvider extends ContentProvider {
      * Provides access to an disk-backed, SQLite datastore which is utilized by FeedProvider. This
      * database should never be accessed by other parts of the application directly.
      */
+    @SuppressWarnings("NullArgumentToVariableArgMethod")
     public class FeedDatabase extends SQLiteOpenHelper {
         /** Schema version. */
         public static final int DATABASE_VERSION = 1;

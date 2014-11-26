@@ -21,11 +21,6 @@ public class SyncDatabaseHelper extends SQLiteOpenHelper {
     /** Filename for SQLite file. */
     public static final String DATABASE_NAME = "SyncKitDemo.db";
 
-    private static final String TYPE_TEXT = " TEXT";
-    private static final String TYPE_INTEGER = " INTEGER";
-    private static final String COMMA_SEP = ",";
-    /** SQL statement to create "Transformer" table. */
-
     public ArrayList<Class> modelsRegisteredForSync;
 
     public SQLiteDatabase databaseObject;

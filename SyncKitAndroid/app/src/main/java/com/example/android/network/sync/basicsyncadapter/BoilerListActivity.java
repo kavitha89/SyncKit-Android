@@ -1,34 +1,27 @@
 package com.example.android.network.sync.basicsyncadapter;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Parcelable;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.example.android.network.sync.basicsyncadapter.adpaters.BoilerListAdapter;
-import com.example.android.network.sync.basicsyncadapter.adpaters.TransformerListAdapter;
 import com.example.android.network.sync.basicsyncadapter.models.Boiler;
-import com.example.android.network.sync.basicsyncadapter.models.Transformer;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
+import android.widget.AdapterView.OnItemClickListener;
 
 
-public class BoilerListActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener  {
+
+public class BoilerListActivity extends Activity implements OnItemClickListener, AdapterView.OnItemLongClickListener  {
 
     ListView listview;
     ArrayList<Boiler> boilerList;
@@ -39,14 +32,12 @@ public class BoilerListActivity extends ActionBarActivity implements AdapterView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_boiler_list);
-        listview = (ListView) findViewById(R.id.boilerListView);
     }
 
     private void updateData()
     {
-        listview = (ListView) findViewById(R.id.trListview);
-        //TODO
-        //boilerList = Transformer.fetchAllAvailableObjectsInDB(getApplicationContext());
+        listview = (ListView) findViewById(R.id.boilerListView);
+        boilerList = Boiler.fetchAllAvailableObjectsInDB(getApplicationContext());
         boilerListAdapter = new BoilerListAdapter(this, R.layout.row, boilerList);
         listview .setAdapter(boilerListAdapter);
         listview.setOnItemClickListener(this);
@@ -108,10 +99,10 @@ public class BoilerListActivity extends ActionBarActivity implements AdapterView
                             long arg3)
     {
         Boiler boilerObject = boilerList.get(position);
-        if(!boilerObject.equals(null))
+        if(boilerObject != null)
         {
             Intent intent = new Intent(BoilerListActivity.this, Boiler_details_activity.class);
-            intent.putExtra("Transformer Object",(Parcelable)boilerObject);
+            intent.putExtra("Boiler Object",(Parcelable)boilerObject);
             startActivity(intent);
         }
     }
@@ -127,9 +118,8 @@ public class BoilerListActivity extends ActionBarActivity implements AdapterView
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Boiler boilerObject = (Boiler)boilerList.get(position);
-                //TODO
-                //boilerObject.deleteTransformerObject(getApplicationContext());
+                Boiler boilerObject = boilerList.get(position);
+                boilerObject.deleteObject(getApplicationContext());
                 boilerList.remove(position);
                 boilerListAdapter.notifyDataSetChanged();
                 dialog.dismiss();

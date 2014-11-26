@@ -341,42 +341,6 @@ public class Transformer extends SyncModel implements Parcelable{
         return "0";
     }
 
-    public static ArrayList<Transformer>fetchAllTransformerObjectsInDB(ContentResolver resolver)
-    {
-        try {
-
-            final ContentResolver contentResolver = resolver;
-
-            Uri uri = Transformer.CONTENT_URI; // Get all entries
-
-            String[] mProjection = {
-                    Transformer.KEY_TRANSFORMER_ID,
-                    Transformer.KEY_NAME,
-                    Transformer.KEY_LOCATION,
-                    Transformer.KEY_MAKE,
-                    Transformer.KEY_CURRENT_TEMP,
-                    Transformer.KEY_OIL_LEVEL,
-                    Transformer.KEY_OPERATING_POWER,
-                    Transformer.KEY_WINDING_COUNT,
-                    Transformer.KEY_WINDING_MAKE,
-                    Transformer.KEY_TYPE,
-                    Transformer.KEY_LAST_UPDATED_TIME,
-                    Transformer.KEY_LAST_SERVER_SYNC_DATE,
-                    Transformer.KEY_SYNC_STATUS
-            };
-
-            Cursor c = contentResolver.query(uri, mProjection, null, null, null);
-
-            return generateArrayFromCursor(c);
-        }
-        catch (Exception Ex)
-        {
-            Log.i(TAG,Ex.toString());
-        }
-
-        return null;
-    }
-
     public static ArrayList<Transformer>fetchAllAvailableObjectsInDB(Context context)
     {
         SyncDatabaseHelper dbHelper = SyncDatabaseHelper.getDataHelper(context);
@@ -427,51 +391,6 @@ public class Transformer extends SyncModel implements Parcelable{
         this.syncStatus = Constants.SYNC_STATUS.INSERTED.getValue();
         SyncDatabaseHelper dbHelper = SyncDatabaseHelper.getDataHelper(context);
         return dbHelper.udpateObject(this);
-    }
-
-
-    public static ArrayList<Transformer>fetchAllTransformerObjectsInDBWithSyncStatus(ContentResolver resolver,int syncStatus)
-    {
-        ArrayList<Transformer> transformers = new ArrayList<Transformer>();
-
-        try {
-
-            final ContentResolver contentResolver = resolver;
-
-            Uri uri = Transformer.CONTENT_URI; // Get all entries
-
-            String mSelectionClause = Transformer.KEY_SYNC_STATUS + " = ?";
-
-            String[] mSelectionArgs = {""};
-
-            mSelectionArgs[0] = Integer.toString(syncStatus);
-
-            String[] mProjection = {
-                    Transformer.KEY_TRANSFORMER_ID,
-                    Transformer.KEY_NAME,
-                    Transformer.KEY_LOCATION,
-                    Transformer.KEY_MAKE,
-                    Transformer.KEY_CURRENT_TEMP,
-                    Transformer.KEY_OIL_LEVEL,
-                    Transformer.KEY_OPERATING_POWER,
-                    Transformer.KEY_WINDING_COUNT,
-                    Transformer.KEY_WINDING_MAKE,
-                    Transformer.KEY_TYPE,
-                    Transformer.KEY_LAST_UPDATED_TIME,
-                    Transformer.KEY_LAST_SERVER_SYNC_DATE,
-                    Transformer.KEY_SYNC_STATUS
-            };
-
-            Cursor c = contentResolver.query(uri, mProjection, mSelectionClause, mSelectionArgs, null);
-
-            return generateArrayFromCursor(c);
-        }
-        catch (Exception Ex)
-        {
-            Log.i(TAG,Ex.toString());
-        }
-
-        return null;
     }
 
     private static ArrayList<Transformer> generateArrayFromCursor(Cursor c)
@@ -529,7 +448,7 @@ public class Transformer extends SyncModel implements Parcelable{
             return transformers;
     }
 
-    public boolean deleteTransformerObject(Context context)
+    public boolean deleteObject(Context context)
     {
         SyncDatabaseHelper dbHelper = SyncDatabaseHelper.getDataHelper(context);
 

@@ -53,8 +53,8 @@ public class BoilerListAdapter extends ArrayAdapter<Boiler> {
         }
 
         Boiler trs = (Boiler)data.get(position);
-        holder.boilerName.setText(trs.trsName);
-        holder.boilerLocation.setText(trs.trsLocation);
+        holder.boilerName.setText(trs.bName);
+        holder.boilerLocation.setText(trs.bLocation);
 
         return row;
     }

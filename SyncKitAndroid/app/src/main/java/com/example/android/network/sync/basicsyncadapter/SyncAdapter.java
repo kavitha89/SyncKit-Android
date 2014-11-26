@@ -132,7 +132,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
     {
         modelsRegisteredForSync = new ArrayList<Class>();
         modelsRegisteredForSync.add(Transformer.class);
-
+        modelsRegisteredForSync.add(Boiler.class);
     }
     /**
      * Called by the Android system in response to a request to run the sync adapter. The work

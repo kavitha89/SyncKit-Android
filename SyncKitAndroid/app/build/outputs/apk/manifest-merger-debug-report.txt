@@ -129,45 +129,53 @@ ADDED from AndroidManifest.xml:66:9
 		ADDED from AndroidManifest.xml:69:13
 	android:name
 		ADDED from AndroidManifest.xml:67:13
+activity#com.example.android.network.sync.basicsyncadapter.Boiler_details_activity
+ADDED from AndroidManifest.xml:73:9
+	android:label
+		ADDED from AndroidManifest.xml:75:13
+	android:theme
+		ADDED from AndroidManifest.xml:76:13
+	android:name
+		ADDED from AndroidManifest.xml:74:13
 provider#com.example.android.network.sync.basicsyncadapter.provider.FeedProvider
-ADDED from AndroidManifest.xml:82:9
+ADDED from AndroidManifest.xml:88:9
 	android:exported
-		ADDED from AndroidManifest.xml:85:13
+		ADDED from AndroidManifest.xml:91:13
 	android:authorities
-		ADDED from AndroidManifest.xml:84:13
+		ADDED from AndroidManifest.xml:90:13
 	android:name
-		ADDED from AndroidManifest.xml:83:13
+		ADDED from AndroidManifest.xml:89:13
 service#com.example.android.network.sync.basicsyncadapter.SyncService
-ADDED from AndroidManifest.xml:91:9
+ADDED from AndroidManifest.xml:97:9
 	android:exported
-		ADDED from AndroidManifest.xml:93:13
+		ADDED from AndroidManifest.xml:99:13
 	android:name
-		ADDED from AndroidManifest.xml:92:13
+		ADDED from AndroidManifest.xml:98:13
 intent-filter#android.content.SyncAdapter
-ADDED from AndroidManifest.xml:99:13
+ADDED from AndroidManifest.xml:105:13
 action#android.content.SyncAdapter
-ADDED from AndroidManifest.xml:100:17
+ADDED from AndroidManifest.xml:106:17
 	android:name
-		ADDED from AndroidManifest.xml:100:25
+		ADDED from AndroidManifest.xml:106:25
 meta-data#android.content.SyncAdapter
-ADDED from AndroidManifest.xml:103:13
+ADDED from AndroidManifest.xml:109:13
 	android:resource
-		ADDED from AndroidManifest.xml:105:17
+		ADDED from AndroidManifest.xml:111:17
 	android:name
-		ADDED from AndroidManifest.xml:104:17
+		ADDED from AndroidManifest.xml:110:17
 service#com.example.android.network.sync.basicsyncadapter.accounts.GenericAccountService
-ADDED from AndroidManifest.xml:116:9
+ADDED from AndroidManifest.xml:122:9
 	android:name
-		ADDED from AndroidManifest.xml:116:18
+		ADDED from AndroidManifest.xml:122:18
 intent-filter#android.accounts.AccountAuthenticator
-ADDED from AndroidManifest.xml:119:13
+ADDED from AndroidManifest.xml:125:13
 action#android.accounts.AccountAuthenticator
-ADDED from AndroidManifest.xml:120:17
+ADDED from AndroidManifest.xml:126:17
 	android:name
-		ADDED from AndroidManifest.xml:120:25
+		ADDED from AndroidManifest.xml:126:25
 meta-data#android.accounts.AccountAuthenticator
-ADDED from AndroidManifest.xml:123:13
+ADDED from AndroidManifest.xml:129:13
 	android:resource
-		ADDED from AndroidManifest.xml:125:17
+		ADDED from AndroidManifest.xml:131:17
 	android:name
-		ADDED from AndroidManifest.xml:124:17
+		ADDED from AndroidManifest.xml:130:17

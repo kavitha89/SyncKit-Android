@@ -43,5 +43,13 @@ limitations under the License.
     <string name="transformer_operating_power">Transformer Operating Power</string>
     <string name="transformer_type">Transformer Type</string>
     <string name="title_activity_boiler_details_activity">Edit Boiler Details</string>
+    <string name="boiler_health_status">Boiler Health Status</string>
+    <string name="boiler_current_containment">Boiler Current Containment</string>
+    <string name="boiler_pressure">Boiler Pressure</string>
+    <string name="boiler_temp">Boiler Temperature</string>
+    <string name="boiler_make">Boiler Make</string>
+    <string name="boiler_capacity">Boiler Capacity</string>
+    <string name="boiler_location">Boiler Location</string>
+    <string name="boiler_name">Boiler Name</string>
 
 </resources>
