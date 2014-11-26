@@ -212,7 +212,7 @@ public class Transformer extends SyncModel implements Parcelable{
 
         if(this.lastUpdatedDate != null)
             values.put(KEY_LAST_UPDATED_TIME, dateFormatter.format(this.lastUpdatedDate));
-        values.put(KEY_SYNC_STATUS,0);
+        values.put(KEY_SYNC_STATUS,this.syncStatus);
 
         return values;
     }
@@ -375,7 +375,7 @@ public class Transformer extends SyncModel implements Parcelable{
     public static ArrayList<Transformer>fetchAllDirtyObjectsInDB(Context context)
     {
         SyncDatabaseHelper dbHelper = SyncDatabaseHelper.getDataHelper(context);
-        return  generateArrayFromCursor(dbHelper.selectAllConflictedObjectsForClass(Transformer.class));
+        return  generateArrayFromCursor(dbHelper.selectAllDirtyObjectsForClass(Transformer.class));
     }
 
     public static ArrayList<Transformer>fetchAllNewObjectsInDB(Context context)
@@ -707,6 +707,7 @@ public class Transformer extends SyncModel implements Parcelable{
         long tmpLastUpdatedDate = in.readLong();
         lastUpdatedDate = tmpLastUpdatedDate != -1 ? new Date(tmpLastUpdatedDate) : null;
         syncStatus = in.readInt();
+        client_id = in.readInt();
         trsLocation = in.readString();
         trsName = in.readString();
         trsOperatingPower = in.readString();
@@ -729,6 +730,7 @@ public class Transformer extends SyncModel implements Parcelable{
         dest.writeLong(lastServerSyncDate != null ? lastServerSyncDate.getTime() : -1L);
         dest.writeLong(lastUpdatedDate != null ? lastUpdatedDate.getTime() : -1L);
         dest.writeInt(syncStatus);
+        dest.writeInt(client_id);
         dest.writeString(trsLocation);
         dest.writeString(trsName);
         dest.writeString(trsOperatingPower);

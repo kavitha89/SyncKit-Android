@@ -1,7 +1,9 @@
 package com.example.android.network.sync.basicsyncadapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -30,11 +32,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class TransformersListActivity extends Activity implements OnItemClickListener {
+public class TransformersListActivity extends Activity implements OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private Menu mOptionsMenu;
 
     private List<Transformer> transformerList;
+    private ListView listview;
+    private TransformerListAdapter transformerListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +54,12 @@ public class TransformersListActivity extends Activity implements OnItemClickLis
 
     private void updateData()
     {
-        final ListView listview = (ListView) findViewById(R.id.trListview);
+        listview = (ListView) findViewById(R.id.trListview);
         transformerList = Transformer.fetchAllAvailableObjectsInDB(getApplicationContext());
-        TransformerListAdapter customAdapter = new TransformerListAdapter(this, R.layout.row, transformerList);
-        listview .setAdapter(customAdapter);
+        transformerListAdapter = new TransformerListAdapter(this, R.layout.row, transformerList);
+        listview .setAdapter(transformerListAdapter);
         listview.setOnItemClickListener(this);
+        listview.setOnItemLongClickListener(this);
     }
 
     @Override
@@ -69,6 +74,40 @@ public class TransformersListActivity extends Activity implements OnItemClickLis
             startActivity(intent);
         }
     }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(
+                this);
+        alert.setTitle("Alert!!");
+        alert.setMessage("Are you sure to delete record");
+        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Transformer transformerObject = (Transformer)transformerList.get(position);
+                transformerObject.deleteTransformerObject(getApplicationContext());
+                transformerList.remove(position);
+                transformerListAdapter.notifyDataSetChanged();
+                dialog.dismiss();
+
+            }
+        });
+        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+
+        alert.show();
+
+        return true;
+    }
+
      @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -104,4 +143,6 @@ public class TransformersListActivity extends Activity implements OnItemClickLis
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 }

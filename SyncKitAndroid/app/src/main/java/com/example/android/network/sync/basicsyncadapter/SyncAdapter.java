@@ -385,11 +385,11 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
             try {
 
                 Class[] cArg = new Class[1];
-                cArg[0] = ContentResolver.class;
+                cArg[0] = Context.class;
 
                 Method methodForNewlyCreatedObjects = sClass.getDeclaredMethod("fetchAllDirtyObjectsInDB",cArg);
 
-                ArrayList<Object> objectsToBeCreated = (ArrayList<Object>) methodForNewlyCreatedObjects.invoke(null,mContentResolver);
+                ArrayList<Object> objectsToBeCreated = (ArrayList<Object>) methodForNewlyCreatedObjects.invoke(null,getContext());
 
                 for (Object obj:objectsToBeCreated)
                 {
@@ -418,11 +418,11 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
             try {
 
                 Class[] cArg = new Class[1];
-                cArg[0] = ContentResolver.class;
+                cArg[0] = Context.class;
 
                 Method methodForNewlyCreatedObjects = sClass.getDeclaredMethod("fetchAllNewObjectsInDB",cArg);
 
-                ArrayList<Class> objectsToBeCreated = (ArrayList<Class>) methodForNewlyCreatedObjects.invoke(null,mContentResolver);
+                ArrayList<Class> objectsToBeCreated = (ArrayList<Class>) methodForNewlyCreatedObjects.invoke(null,getContext());
 
                 for (Object obj:objectsToBeCreated)
                 {
@@ -448,11 +448,11 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
             try {
 
                 Class[] cArg = new Class[1];
-                cArg[0] = ContentResolver.class;
+                cArg[0] = Context.class;
 
                 Method methodForNewlyCreatedObjects = sClass.getDeclaredMethod("fetchAllDeletedObjectsInDB",cArg);
 
-                ArrayList<Class> objectsToBeCreated = (ArrayList<Class>) methodForNewlyCreatedObjects.invoke(null,mContentResolver);
+                ArrayList<Class> objectsToBeCreated = (ArrayList<Class>) methodForNewlyCreatedObjects.invoke(null,getContext());
 
                 for (Object obj:objectsToBeCreated)
                 {
