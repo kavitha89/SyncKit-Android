@@ -119,29 +119,6 @@ public class ModelSelectionFragment extends ListFragment
         mAdapter = new SimpleAdapter(getActivity(), list, android.R.layout.simple_expandable_list_item_1, from, to);
         setListAdapter(mAdapter);
 
-        /*mAdapter = new SimpleCursorAdapter(
-                getActivity(),       // Current context
-                android.R.layout.simple_list_item_activated_2,  // Layout for individual rows
-                null,                // Cursor
-                FROM_COLUMNS,        // Cursor columns to use
-                TO_FIELDS,           // Layout fields to use
-                0                    // No flags
-        );
-        mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-            @Override
-            public boolean setViewValue(View view, Cursor cursor, int i) {
-                if (i == COLUMN_PUBLISHED) {
-                    // Convert timestamp to human-readable date
-                    Time t = new Time();
-                    t.set(cursor.getLong(i));
-                    ((TextView) view).setText(t.format("%Y-%m-%d %H:%M"));
-                    return true;
-                } else {
-                    // Let SimpleCursorAdapter handle other fields automatically
-                    return false;
-                }
-            }
-        });*/
         setListAdapter(mAdapter);
         //setEmptyText(getText(R.string.loading));
         getLoaderManager().initLoader(0, null, this);

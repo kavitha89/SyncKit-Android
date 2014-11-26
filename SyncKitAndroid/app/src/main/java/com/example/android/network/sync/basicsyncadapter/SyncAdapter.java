@@ -31,6 +31,7 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.example.android.network.sync.basicsyncadapter.models.Boiler;
+import com.example.android.network.sync.basicsyncadapter.models.Pipe;
 import com.example.android.network.sync.basicsyncadapter.models.Transformer;
 
 import org.apache.http.HttpResponse;
@@ -43,6 +44,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.xmlpull.v1.XmlPullParserException;
 
 import org.json.*;
+
+import com.example.android.network.sync.basicsyncadapter.models.Turbine;
 import com.google.gson.*;
 
 import java.io.BufferedReader;
@@ -133,6 +136,8 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
         modelsRegisteredForSync = new ArrayList<Class>();
         modelsRegisteredForSync.add(Transformer.class);
         modelsRegisteredForSync.add(Boiler.class);
+        modelsRegisteredForSync.add(Turbine.class);
+        modelsRegisteredForSync.add(Pipe.class);
     }
     /**
      * Called by the Android system in response to a request to run the sync adapter. The work

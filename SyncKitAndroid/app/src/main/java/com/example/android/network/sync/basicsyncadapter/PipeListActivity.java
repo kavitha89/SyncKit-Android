@@ -1,15 +1,24 @@
 package com.example.android.network.sync.basicsyncadapter;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.example.android.network.sync.basicsyncadapter.adpaters.PipeListAdapter;
+import com.example.android.network.sync.basicsyncadapter.adpaters.TransformerListAdapter;
 import com.example.android.network.sync.basicsyncadapter.models.Pipe;
+import com.example.android.network.sync.basicsyncadapter.models.Transformer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,80 +29,74 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class PipeListActivity extends ActionBarActivity {
+public class PipeListActivity extends Activity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+
+    private Menu mOptionsMenu;
+    private List<Pipe> pipeList;
+    private ListView listview;
+    private PipeListAdapter pipeListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pipe);
-        final ListView listview = (ListView) findViewById(R.id.pipeListView);
 
-        List<Pipe> transformerList = buildData();
-        String[] from = { Pipe.KEY_NAME,Pipe.KEY_LOCATION };
-        int[] to = { android.R.id.text1,android.R.id.text2 };
-
-
-        ListAdapter adapter = new PipeListAdapter(this, transformerList, android.R.layout.simple_list_item_2, new String[] {
-                Pipe.KEY_NAME, Pipe.KEY_LOCATION }, new int[] { android.R.id.text1, android.R.id.text2 });
-        listview.setAdapter(adapter);
+    }
+    private void updateData()
+    {
+        listview = (ListView) findViewById(R.id.pipeListView);
+        pipeList = Pipe.fetchAllAvailableObjectsInDB(getApplicationContext());
+        pipeListAdapter = new PipeListAdapter(this, R.layout.row, pipeList);
+        listview .setAdapter(pipeListAdapter);
+        listview.setOnItemClickListener(this);
+        listview.setOnItemLongClickListener(this);
     }
 
-    private List<Pipe> buildData() {
-
-        List<Pipe> transformers = new ArrayList<Pipe>();
-
-        try {
-            JSONObject jso = new JSONObject(loadJSONFromAsset());
-            JSONArray ja = jso.getJSONArray("results");
-
-
-            /*GsonBuilder gsonBuilder = new GsonBuilder();
-            gsonBuilder.setDateFormat("M/d/yy hh:mm a");
-            Gson gson = gsonBuilder.create();*/
-            //posts = Arrays.asList(gson.fromJson(ja.toString(), Transformer[].class));
-
-            for( int i = 0; i < ja.length(); i++ ) {
-                //Transformer transformerObject = new Transformer();
-                transformers.add(new Pipe(ja.getJSONObject(i).getString("pipeLocation"), ja.getJSONObject(i).getString("pipeCurrentContainment")));
-                //transformerObject.trsName = entry.getString("transformerNickName");
-                //transformerObject.trsLocation = entry.getString("transformerLocation");
-                //posts.add(transformerObject);
-                //DO STUFF
-            }
-        }
-        catch (Exception Ex)
+    @Override
+    public void onItemClick(AdapterView<?> adapter, View v, int position,
+                            long arg3)
+    {
+        Pipe pipeObject = pipeList.get(position);
+        if(!pipeObject.equals(null))
         {
-            Log.e("Machi Crash Log", "Failed to parse JSON due to: " + Ex);
+            Intent intent = new Intent(PipeListActivity.this, Pipe_details_activity.class);
+            intent.putExtra("Pipe Object",(Parcelable)pipeObject);
+            startActivity(intent);
         }
-
-        return transformers;
     }
 
-    public String loadJSONFromAsset() {
-        String json = null;
-        try {
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
 
-            InputStream is = getResources().openRawResource(R.raw.pipe);
+        AlertDialog.Builder alert = new AlertDialog.Builder(
+                this);
+        alert.setTitle("Alert!!");
+        alert.setMessage("Are you sure to delete record");
+        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
 
-            int size = is.available();
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Pipe pipeObject = (Pipe)pipeList.get(position);
+                pipeObject.deleteObject(getApplicationContext());
+                pipeList.remove(position);
+                pipeListAdapter.notifyDataSetChanged();
+                dialog.dismiss();
 
-            byte[] buffer = new byte[size];
+            }
+        });
+        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
 
-            is.read(buffer);
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
-            is.close();
+                dialog.dismiss();
+            }
+        });
 
-            json = new String(buffer, "UTF-8");
+        alert.show();
 
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
-
+        return true;
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -111,6 +114,21 @@ public class PipeListActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+
+
+        if(id == R.id.menu_add_new_pipe)
+        {
+            Intent intent = new Intent(this, Pipe_details_activity.class);
+            startActivity(intent);
+        }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        updateData();
+    }
+
 }

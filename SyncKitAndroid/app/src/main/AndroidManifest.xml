@@ -50,7 +50,7 @@
         </activity>
         <activity
             android:name="com.example.android.network.sync.basicsyncadapter.PipeListActivity"
-            android:label="@string/title_activity_transformer_list"
+            android:label="@string/title_activity_pipe_list"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
@@ -77,6 +77,11 @@
         <activity
             android:name="com.example.android.network.sync.basicsyncadapter.Turbine_details_activity"
             android:label="@string/title_activity_turbine_details_activity"
+            android:theme="@style/Theme.AppCompat.Light" >
+        </activity>
+        <activity
+            android:name="com.example.android.network.sync.basicsyncadapter.Pipe_details_activity"
+            android:label="@string/title_activity_pipe_details_activity"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <!--
@@ -134,6 +139,7 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
+
     </application>
 
 </manifest>

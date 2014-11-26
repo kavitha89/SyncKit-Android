@@ -35,7 +35,6 @@ import java.util.List;
 public class TransformersListActivity extends Activity implements OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private Menu mOptionsMenu;
-
     private List<Transformer> transformerList;
     private ListView listview;
     private TransformerListAdapter transformerListAdapter;
@@ -109,13 +108,15 @@ public class TransformersListActivity extends Activity implements OnItemClickLis
         mOptionsMenu = menu;
         getMenuInflater().inflate(R.menu.tr_list, menu);
         return true;
-    }
+     }
+
     @Override
     protected void onResume()
     {
         super.onResume();
         updateData();
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

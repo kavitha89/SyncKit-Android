@@ -268,57 +268,5 @@ public class FeedProvider extends ContentProvider {
             db.execSQL(SQL_DELETE_ENTRIES);
             onCreate(db);
         }
-
-        public boolean insertObject(Object obj)
-        {
-            SQLiteDatabase db = this.getWritableDatabase();
-
-            try {
-                Method getContentValuesMethod = obj.getClass().getDeclaredMethod("contentValuesForInsert", null);
-                ContentValues insertValues = (ContentValues) getContentValuesMethod.invoke(obj,null);
-
-                Method getTableNameMethod = obj.getClass().getDeclaredMethod("SQLITETableNameMethod",null);
-                String tableName = (String) getTableNameMethod.invoke(null,null);
-
-                db.insert(tableName,null,insertValues);
-
-                return true;
-            }
-            catch(Exception ex)
-            {
-                System.out.println(ex.toString());
-            }
-
-            return false;
-        }
-
-        public boolean udpateObject(Object obj)
-        {
-            SQLiteDatabase db = this.getWritableDatabase();
-
-            try {
-                Method getContentValuesMethod = obj.getClass().getDeclaredMethod("contentValuesForUpdate", null);
-                ContentValues updateValues = (ContentValues) getContentValuesMethod.invoke(obj,null);
-
-                Method getTableNameMethod = obj.getClass().getDeclaredMethod("SQLITETableNameMethod",null);
-                String tableName = (String) getTableNameMethod.invoke(null,null);
-
-                Method getColumnNameForIdentificationAttribute = obj.getClass().getDeclaredMethod("columnNameForIdentificationAttribute",null);
-                String columnName = (String) getColumnNameForIdentificationAttribute.invoke(null,null);
-
-                Method getIdentificationAttribtueValue = obj.getClass().getDeclaredMethod("identificationAttributeValue",null);
-                String idValue = (String) getColumnNameForIdentificationAttribute.invoke(obj,null);
-
-                db.update(tableName,updateValues,columnName + " = ?",new String[]{idValue});
-
-                return true;
-            }
-            catch(Exception ex)
-            {
-                System.out.println(ex.toString());
-            }
-
-            return false;
-        }
     }
 }

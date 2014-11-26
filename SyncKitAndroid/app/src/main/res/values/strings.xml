@@ -16,21 +16,22 @@ limitations under the License.
 -->
 <resources>
 
-    <string name="app_name">SyncKit</string>
-    <string name="account_name">SyncKit</string>
+    <string name="app_name">SyncKit Demo</string>
+    <string name="account_name">SyncKit Demo</string>
     <string name="title_entry_detail">Entry Detail</string>
     <string name="loading">Waiting for sync...</string>
     <string name="description_refresh">Refresh</string>
     <string name="description_add">Add</string>
-    <string name="title_activity_model_selection">ModelSelectionActivity</string>
+    <string name="title_activity_model_selection">Registered Models For Sync</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_transformer_list">TransformerListActivity</string>
-    <string name="transformer_list_activity">TransformerListActivity</string>
+    <string name="title_activity_transformer_list">Transformers List </string>
+    <string name="title_activity_pipe_list">Pipes List</string>
+    <string name="transformer_list_activity">Transformers List</string>
     <string name="title_activity_pipe">PipeActivity</string>
-    <string name="title_activity_turbine_list">TurbineListActivity</string>
-    <string name="title_activity_boiler_list">BoilerListActivity</string>
+    <string name="title_activity_turbine_list">Turbines List</string>
+    <string name="title_activity_boiler_list">Boilers List</string>
     <string name="title_activity_transformer_details_activity">Edit Transformer Details</string>
     <string name="description_save">Save</string>
     <string name="transformer_name">Transformer Name</string>
@@ -62,5 +63,16 @@ limitations under the License.
     <string name="turbine_health_status">Turbine Compressor Health Status</string>
     <string name="turbine_rotation_speed">Turbine Rotation Speed</string>
     <string name="turbine_rotor_count">Turbine Rotor Count</string>
+    <string name="title_activity_pipe_details_activity">Edit Pipe Details</string>
+    <string name="pipe_location">Pipe Location</string>
+    <string name="pipe_current_containment">Pipe Current Containment</string>
+    <string name="pipe_diameter">Pipe Diameter</string>
+    <string name="pipe_length">Pipe Length</string>
+    <string name="pipe_make">Pipe Make</string>
+    <string name="pipe_temp">Pipe Temperature</string>
+    <string name="pipe_pressure">Pipe Pressure</string>
+    <string name="pipe_health_status">Pipe Health Status</string>
+    <string name="pipe_max_temp">Pipe Max Temperature</string>
+    <string name="pipe_max_pressure">Pipe Max Pressure</string>
 
 </resources>
