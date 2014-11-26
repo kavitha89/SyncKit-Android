@@ -51,5 +51,16 @@ limitations under the License.
     <string name="boiler_capacity">Boiler Capacity</string>
     <string name="boiler_location">Boiler Location</string>
     <string name="boiler_name">Boiler Name</string>
+    <string name="title_activity_turbine_details_activity">Edit Turbine Details</string>
+    <string name="turbine_name">Turbine Name</string>
+    <string name="turbine_location">Turbine Location</string>
+    <string name="turbine_temp">Turbine Temperature</string>
+    <string name="turbine_capacity">Turbine Capacity</string>
+    <string name="turbine_pressure">Turbine Pressure</string>
+    <string name="turbine_RPM">Turbine RPM</string>
+    <string name="turbine_oil_level">Turbine Oil Level</string>
+    <string name="turbine_health_status">Turbine Compressor Health Status</string>
+    <string name="turbine_rotation_speed">Turbine Rotation Speed</string>
+    <string name="turbine_rotor_count">Turbine Rotor Count</string>
 
 </resources>

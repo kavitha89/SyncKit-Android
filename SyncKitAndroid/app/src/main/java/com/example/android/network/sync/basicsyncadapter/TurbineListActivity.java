@@ -1,10 +1,14 @@
 package com.example.android.network.sync.basicsyncadapter;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -20,13 +24,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class TurbineListActivity extends ActionBarActivity {
+public class TurbineListActivity extends Activity implements AdapterView.OnItemClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_turbine_list);
         final ListView listview = (ListView) findViewById(R.id.turbineListView);
+        listview.setOnItemClickListener(this);
 
         List<Turbine> transformerList = buildData();
         String[] from = { Turbine.KEY_NAME,Turbine.KEY_LOCATION };
@@ -113,5 +118,13 @@ public class TurbineListActivity extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        Intent newIntent = new Intent(this,Turbine_details_activity.class);
+        startActivity(newIntent);
+
     }
 }

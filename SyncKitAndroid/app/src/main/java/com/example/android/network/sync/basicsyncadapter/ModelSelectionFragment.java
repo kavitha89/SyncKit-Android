@@ -255,21 +255,6 @@ public class ModelSelectionFragment extends ListFragment
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
 
-
-        /*Cursor c = (Cursor) mAdapter.getItem(position);
-        // Get the link to the article represented by the item.
-        String articleUrlString = c.getString(COLUMN_URL_STRING);
-        if (articleUrlString == null) {
-            Log.e(TAG, "Attempt to launch entry with null link");
-            return;
-        }
-
-        Log.i(TAG, "Opening URL: " + articleUrlString);
-        // Get a Uri object for the URL string
-        Uri articleURL = Uri.parse(articleUrlString);
-        Intent i = new Intent(Intent.ACTION_VIEW, articleURL);
-        startActivity(i);*/
-
         Map<String, String> selection = (Map<String, String>) listView.getItemAtPosition(position);
         String count = selection.get("modelName");
         Log.i(TAG,"Model Clicked: " + count);

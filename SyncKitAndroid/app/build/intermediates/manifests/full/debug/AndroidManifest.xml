@@ -74,6 +74,11 @@
             android:label="@string/title_activity_boiler_details_activity"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
+        <activity
+            android:name="com.example.android.network.sync.basicsyncadapter.Turbine_details_activity"
+            android:label="@string/title_activity_turbine_details_activity"
+            android:theme="@style/Theme.AppCompat.Light" >
+        </activity>
         <!--
         ContentProvider to store feed data.
 
