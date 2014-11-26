@@ -44,12 +44,6 @@ public class TransformersListActivity extends Activity implements OnItemClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tr_list);
-
-
-        /*ListAdapter adapter = new TransformerListAdapter(this, transformerList, android.R.layout.simple_list_item_2, new String[] {
-                Transformer.KEY_NAME, Transformer.KEY_LOCATION }, new int[] { android.R.id.text1, android.R.id.text2 });
-        listview.setAdapter(adapter);
-        listview.setOnItemClickListener(this);*/
     }
 
     private void updateData()

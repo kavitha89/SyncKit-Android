@@ -8,20 +8,10 @@ import java.util.List;
 /**
  * Created by Veni on 11/10/14.
  */
-public class Boiler extends HashMap<String,String> {
+public class Boiler extends SyncModel {
 
     public static String KEY_NAME = "trsName";
     public static String KEY_LOCATION = "trsLocation";
-    @Override
-    public String get(Object k) {
-        String key = (String) k;
-        if (KEY_NAME.equals(key))
-            return trsName;
-        else if (KEY_LOCATION.equals(key))
-            return trsLocation;
-        return null;
-    }
-
 
     public Boiler(String name, String location) {
         this.trsName = name;

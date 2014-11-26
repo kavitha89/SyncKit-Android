@@ -65,13 +65,4 @@ public class TransformerListAdapter extends ArrayAdapter<Transformer> {
         TextView transformerLocation;
     }
 
-	/*private List<Transformer> cars;
-
-	public TransformerListAdapter(Context context, List<? extends Map<String, String>> cars, int resource, String[] from,
-                                  int[] to) {
-		super(context, cars, resource, from, to);
-		this.cars = (List<Transformer>) cars;
-	}*/
-
-
 }

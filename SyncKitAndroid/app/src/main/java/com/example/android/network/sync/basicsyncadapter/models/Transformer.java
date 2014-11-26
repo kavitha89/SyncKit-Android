@@ -187,7 +187,7 @@ public class Transformer extends SyncModel implements Parcelable{
 
         if(this.lastUpdatedDate != null)
             values.put(KEY_LAST_UPDATED_TIME, dateFormatter.format(this.lastUpdatedDate));
-        values.put(KEY_SYNC_STATUS,0);
+        values.put(KEY_SYNC_STATUS,this.syncStatus);
 
         return values;
     }
@@ -295,14 +295,25 @@ public class Transformer extends SyncModel implements Parcelable{
                 //set sync status to Synced
             }
         }
-
         catch (Exception ex)
         {
             System.out.println(ex.toString());
         }
-
         return "0";
+    }
 
+    public String handleObjectDeleteResponseFromServer(String response,Context context)
+    {
+        try {
+
+            SyncDatabaseHelper dbHelper = SyncDatabaseHelper.getDataHelper(context);
+            dbHelper.deletObject(this);
+        }
+        catch (Exception ex)
+        {
+            System.out.println(ex.toString());
+        }
+        return "0";
     }
 
     public String handleObjectCreateResponseFromServer(String response,Context context)
@@ -532,9 +543,10 @@ public class Transformer extends SyncModel implements Parcelable{
         }
 
     }
-    public boolean saveTransformerObjectToDB(Context context)
+    public boolean insertObjectToDB(Context context)
     {
         SyncDatabaseHelper dbHelper = SyncDatabaseHelper.getDataHelper(context);
+        this.syncStatus = Constants.SYNC_STATUS.INSERTED.getValue();
         return dbHelper.insertObject(this);
     }
 
@@ -544,10 +556,16 @@ public class Transformer extends SyncModel implements Parcelable{
         return dbHelper.udpateObject(this);
     }
 
-    public boolean updateTransformerObjectInDB(Context context)
+    public boolean updateObjectInDB(Context context)
     {
         this.lastUpdatedDate = new Date();
-        this.syncStatus = Constants.SYNC_STATUS.DIRTY.getValue();
+        if(this.syncStatus == Constants.SYNC_STATUS.INSERTED.getValue()) {
+            //keep it the same, don't do anything!
+        }
+        else
+        {
+            this.syncStatus = Constants.SYNC_STATUS.DIRTY.getValue();
+        }
         SyncDatabaseHelper dbHelper = SyncDatabaseHelper.getDataHelper(context);
         return dbHelper.udpateObject(this);
     }
@@ -585,6 +603,22 @@ public class Transformer extends SyncModel implements Parcelable{
         return sync_flag;
     }
 
+    private static int getClientIDForObjectWithID(ArrayList<Transformer> transformers,String transformerID)
+    {
+        int sync_flag = 0;
+
+        for (Transformer e : transformers) {
+
+            if(e.transformerID.equals(transformerID))
+            {
+                sync_flag = e.client_id;
+                break;
+            }
+        }
+
+        return sync_flag;
+    }
+
     public static SyncResult handleInsertWithData(Context contentResolver,InputStream stream,SyncResult syncResult) throws RemoteException, OperationApplicationException {
 
         final List<Transformer> transformersListFromResponse = parseTransformersResponse(stream);
@@ -601,6 +635,7 @@ public class Transformer extends SyncModel implements Parcelable{
             //entryMap.put(e.transformerID, e);
             if (isTransformerObjectWithIDExistsInArray(transformerListFromDB, e.transformerID)) {
                 if (getSyncStatusForObjectWithID(transformerListFromDB, e.transformerID) == Constants.SYNC_STATUS.SYNCED.getValue()) {
+                    e.client_id = getClientIDForObjectWithID(transformerListFromDB,e.transformerID);
                     dbHelper.udpateObject(e);
                 }
 

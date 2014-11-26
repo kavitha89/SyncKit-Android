@@ -35,6 +35,7 @@ import com.example.android.network.sync.basicsyncadapter.models.Transformer;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
@@ -387,11 +388,11 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
                 Class[] cArg = new Class[1];
                 cArg[0] = Context.class;
 
-                Method methodForNewlyCreatedObjects = sClass.getDeclaredMethod("fetchAllDirtyObjectsInDB",cArg);
+                Method methodForGettingDirtyObjects = sClass.getDeclaredMethod("fetchAllDirtyObjectsInDB",cArg);
 
-                ArrayList<Object> objectsToBeCreated = (ArrayList<Object>) methodForNewlyCreatedObjects.invoke(null,getContext());
+                ArrayList<Object> objectsToBeUpdated = (ArrayList<Object>) methodForGettingDirtyObjects.invoke(null,getContext());
 
-                for (Object obj:objectsToBeCreated)
+                for (Object obj:objectsToBeUpdated)
                 {
                     updateObjectAtServerForObject(obj,syncResult);
                 }
@@ -422,7 +423,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
 
                 Method methodForNewlyCreatedObjects = sClass.getDeclaredMethod("fetchAllNewObjectsInDB",cArg);
 
-                ArrayList<Class> objectsToBeCreated = (ArrayList<Class>) methodForNewlyCreatedObjects.invoke(null,getContext());
+                ArrayList<Object> objectsToBeCreated = (ArrayList<Object>) methodForNewlyCreatedObjects.invoke(null,getContext());
 
                 for (Object obj:objectsToBeCreated)
                 {
@@ -433,7 +434,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
 
             catch (Exception ex)
             {
-
+                System.out.println(ex.toString());
             }
 
         }
@@ -450,11 +451,11 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
                 Class[] cArg = new Class[1];
                 cArg[0] = Context.class;
 
-                Method methodForNewlyCreatedObjects = sClass.getDeclaredMethod("fetchAllDeletedObjectsInDB",cArg);
+                Method methodToGetDeletedObjects = sClass.getDeclaredMethod("fetchAllDeletedObjectsInDB",cArg);
 
-                ArrayList<Class> objectsToBeCreated = (ArrayList<Class>) methodForNewlyCreatedObjects.invoke(null,getContext());
+                ArrayList<Object> objectsToBeDeleted = (ArrayList<Object>) methodToGetDeletedObjects.invoke(null,getContext());
 
-                for (Object obj:objectsToBeCreated)
+                for (Object obj:objectsToBeDeleted)
                 {
                     deleteObjectAtServerForObject(obj,syncResult);
                 }
@@ -463,7 +464,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
 
             catch (Exception ex)
             {
-
+                System.out.println(ex.toString());
             }
 
         }
@@ -547,24 +548,12 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
                 System.out.println(result);
                 if(httpResponse.getStatusLine().getStatusCode() == 201)
                 {
-                    /*Method identificationAttributeValueMethod = obj.getClass().getDeclaredMethod("identificationAttributeValue", null);
-                    String idAttribute = (String)identificationAttributeValueMethod.invoke(obj,null);
-
                     Class[] cArg = new Class[2];
                     cArg[0] = String.class;
-                    cArg[1] = ContentResolver.class;
-
-                    Method setSyncFlagToSyncedMethod = obj.getClass().getDeclaredMethod("setObjectAsSynced", cArg);
-                    String setSynced = (String)setSyncFlagToSyncedMethod.invoke(obj,idAttribute,mContentResolver);
-                    if(setSynced.equals("1"))
-                        System.out.println("Success!!");*/
-
-                    Class[] cArg = new Class[2];
-                    cArg[0] = String.class;
-                    cArg[1] = ContentResolver.class;
+                    cArg[1] = Context.class;
 
                     Method handleInsertResponseForObjectMethod = obj.getClass().getDeclaredMethod("handleObjectCreateResponseFromServer", cArg);
-                    String setSynced = (String)handleInsertResponseForObjectMethod.invoke(obj,result,mContentResolver);
+                    String setSynced = (String)handleInsertResponseForObjectMethod.invoke(obj,result,getContext());
                     if(setSynced.equals("1"))
                         System.out.println("Success!!");
                 }
@@ -611,24 +600,13 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
                     System.out.println(result);
                     if(httpResponse.getStatusLine().getStatusCode() == 200)
                     {
-                        /*Method identificationAttributeValueMethod = obj.getClass().getDeclaredMethod("identificationAttributeValue", null);
-                        String idAttribute = (String)identificationAttributeValueMethod.invoke(obj,null);
 
                         Class[] cArg = new Class[2];
                         cArg[0] = String.class;
-                        cArg[1] = ContentResolver.class;
-
-                        Method setSyncFlagToSyncedMethod = obj.getClass().getDeclaredMethod("setObjectAsSynced", cArg);
-                        String setSynced = (String)setSyncFlagToSyncedMethod.invoke(obj,idAttribute,mContentResolver);
-                        if(setSynced.equals("1"))
-                        System.out.println("Success!!");*/
-
-                        Class[] cArg = new Class[2];
-                        cArg[0] = String.class;
-                        cArg[1] = ContentResolver.class;
+                        cArg[1] = Context.class;
 
                         Method handleObjectUpdateResponseFromServerUpdateResponseForObjectMethod = obj.getClass().getDeclaredMethod("handleObjectUpdateResponseFromServer", cArg);
-                        String setSynced = (String)handleObjectUpdateResponseFromServerUpdateResponseForObjectMethod.invoke(obj,result,mContentResolver);
+                        String setSynced = (String)handleObjectUpdateResponseFromServerUpdateResponseForObjectMethod.invoke(obj,result,getContext());
                         if(setSynced.equals("1"))
                             System.out.println("Success!!");
                     }
@@ -655,23 +633,32 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
             System.out.println(urlForDeleteServerObject);
             final URL fetchAllURL = new URL(urlForDeleteServerObject);
 
-            HttpURLConnection conn = (HttpURLConnection) fetchAllURL.openConnection();
-            conn.setRequestProperty("X-Parse-Application-Id","TsEDR12ICJtD59JM92WslVurN0wh5JPuznKvroRc");
-            conn.setRequestProperty("X-Parse-REST-API-Key", "4LC6oFNCyqLMFHSdPIPsxJoXHY6gTHGMG2kUcbwB");
-            conn.setReadTimeout(NET_READ_TIMEOUT_MILLIS /* milliseconds */);
-            conn.setConnectTimeout(NET_CONNECT_TIMEOUT_MILLIS /* milliseconds */);
-            conn.setRequestMethod("DELETE");
-            conn.connect();
-            Log.i(TAG, "Response from parse.com : " + conn.getResponseMessage());
-            Log.i(TAG, "Status Code from parse.com : " + conn.getResponseCode());
+            InputStream inputStream = null;
+            String result = "";
 
-            /*Class[] cArg = new Class[3];
-            cArg[0] = ContentResolver.class;
-            cArg[1] = InputStream.class;
-            cArg[2] = SyncResult.class;
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpDelete httpDelete = new HttpDelete(urlForDeleteServerObject);
+            httpDelete.setHeader("Accept", "application/json");
+            httpDelete.setHeader("Content-type", "application/json");
+            httpDelete.setHeader("X-Parse-Application-Id", "TsEDR12ICJtD59JM92WslVurN0wh5JPuznKvroRc");
+            httpDelete.setHeader("X-Parse-REST-API-Key", "4LC6oFNCyqLMFHSdPIPsxJoXHY6gTHGMG2kUcbwB");
+            HttpResponse httpResponse = httpclient.execute(httpDelete);
+            inputStream = httpResponse.getEntity().getContent();
+            if(inputStream != null) {
+                result = convertInputStreamToString(inputStream);
+                System.out.println(result);
+                if(httpResponse.getStatusLine().getStatusCode() == 200)
+                {
+                    Class[] cArg = new Class[2];
+                    cArg[0] = String.class;
+                    cArg[1] = Context.class;
 
-            Method handleDataForModel = obj.getClass().getDeclaredMethod("handleInsertWithData", cArg);
-            SyncResult objectsUpdated = (SyncResult) handleDataForModel.invoke(null, mContentResolver,conn.getInputStream(),sResults);*/
+                    Method handleObjectDeleteResponseFromServer = obj.getClass().getDeclaredMethod("handleObjectDeleteResponseFromServer", cArg);
+                    String setSynced = (String)handleObjectDeleteResponseFromServer.invoke(obj,result,getContext());
+                    if(setSynced.equals("1"))
+                        System.out.println("Success!!");
+                }
+            }
         }
 
         catch (Exception ex)

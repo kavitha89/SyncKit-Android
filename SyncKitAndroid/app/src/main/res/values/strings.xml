@@ -42,6 +42,6 @@ limitations under the License.
     <string name="transformer_oil_level">Transformer Oil Level</string>
     <string name="transformer_operating_power">Transformer Operating Power</string>
     <string name="transformer_type">Transformer Type</string>
-
+    <string name="title_activity_boiler_details_activity">Edit Boiler Details</string>
 
 </resources>

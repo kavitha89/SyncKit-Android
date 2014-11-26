@@ -93,7 +93,7 @@ public class Transformer_details_activity extends Activity {
                 this.transformerObject.trsOperatingPower = ((TextView) findViewById(R.id.edit_transformer_operating_power)).getText().toString();
                 this.transformerObject.trsType = ((TextView) findViewById(R.id.edit_transformer_type)).getText().toString();
                 this.transformerObject.syncStatus = Constants.SYNC_STATUS.INSERTED.getValue();
-                if(this.transformerObject.saveTransformerObjectToDB(getApplicationContext()))
+                if(this.transformerObject.insertObjectToDB(getApplicationContext()))
                 {
                     Toast.makeText(this, "Transformer Object Added Successfully", Toast.LENGTH_LONG).show();
                     this.finish();
@@ -113,7 +113,7 @@ public class Transformer_details_activity extends Activity {
                 this.transformerObject.trsOperatingPower = ((TextView) findViewById(R.id.edit_transformer_operating_power)).getText().toString();
                 this.transformerObject.trsType = ((TextView) findViewById(R.id.edit_transformer_type)).getText().toString();
                 //update existing object via method in model class
-                if(this.transformerObject.updateTransformerObjectInDB(getApplicationContext()))
+                if(this.transformerObject.updateObjectInDB(getApplicationContext()))
                 {
                     Toast.makeText(this, "Transformer Object Updated Successfully", Toast.LENGTH_LONG).show();
                     this.finish();
