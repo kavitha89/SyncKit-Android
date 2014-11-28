@@ -1,6 +1,8 @@
 package com.example.android.network.sync.basicsyncadapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -78,6 +80,25 @@ public class Transformer_details_activity extends Activity {
         else if(id == R.id.menu_save_transformer_details)
         {
             //save button has been pressed. handle accordingly.
+            if(((TextView) findViewById(R.id.edit_transformer_name)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_transformer_location)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_transformer_make)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_transformer_current_temp)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_transformer_winding_count)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_transformer_winding_make)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_transformer_oil_level)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_transformer_operating_power)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_transformer_type)).getText().toString().length() <=0)
+            {
+                AlertDialog.Builder alert = new AlertDialog.Builder(
+                        this);
+                alert.setTitle("Alert!!");
+                alert.setMessage("Enter All Values");
+                alert.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+                    }
+                });
+
+                alert.show();
+
+                return super.onOptionsItemSelected(item);
+            }
 
             if(this.transformerObject == null)
             {

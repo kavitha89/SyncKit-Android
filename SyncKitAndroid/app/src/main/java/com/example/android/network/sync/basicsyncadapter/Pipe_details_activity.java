@@ -1,6 +1,8 @@
 package com.example.android.network.sync.basicsyncadapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -72,7 +74,27 @@ public class Pipe_details_activity extends Activity {
 
         else if(id == R.id.menu_save_pipe_details)
         {
-            //save button has been pressed. handle accordingly.
+        //save button has been pressed. handle accordingly.
+
+            if(((TextView) findViewById(R.id.edit_pipe_diamter)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_pipe_location)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_pipe_length)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_pipe_make)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_pipe_health_status)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_pipe_containment)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_pipe_pressure)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_pipe_temp)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_pipe_max_pressure)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_pipe_max_temp)).getText().toString().length() <=0)
+            {
+                AlertDialog.Builder alert = new AlertDialog.Builder(
+                        this);
+                alert.setTitle("Alert!!");
+                alert.setMessage("Enter All Values");
+                alert.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+                    }
+                });
+
+                alert.show();
+
+                return super.onOptionsItemSelected(item);
+            }
 
             if(this.pipeObject == null)
             {

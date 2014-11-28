@@ -10,4 +10,4 @@
           android:layout_marginRight="16dp"
           tools:context=".EntryListActivity"
           tools:layout="@android:layout/list_content" />
-<!-- From: file:/Users/aceldesign/Desktop/Satheesh/MS%20Project/Kav/Androidbits_Demo/SyncKitAndroid/app/src/main/res/layout/activity_entry_list.xml -->
+<!-- From: file:/Users/macair/Pictures/BITS%20Final/Androidbits_Demo/SyncKitAndroid/app/src/main/res/layout/activity_entry_list.xml -->

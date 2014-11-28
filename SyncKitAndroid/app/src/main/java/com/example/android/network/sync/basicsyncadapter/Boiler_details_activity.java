@@ -1,6 +1,8 @@
 package com.example.android.network.sync.basicsyncadapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -67,6 +69,26 @@ public class Boiler_details_activity extends Activity {
         else if(id == R.id.menu_save_boiler_details)
         {
             //save button has been pressed. handle accordingly.
+
+            if(((TextView) findViewById(R.id.edit_boiler_name)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_boiler_location)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_boiler_capacity)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_boiler_pressure)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_boiler_temp)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_boiler_current_containment)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_boiler_make)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_boiler_health_status)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_boiler_make)).getText().toString().length() <=0)
+            {
+                AlertDialog.Builder alert = new AlertDialog.Builder(
+                        this);
+                alert.setTitle("Alert!!");
+                alert.setMessage("Enter All Values");
+                alert.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+                    }
+                });
+
+                alert.show();
+
+                return super.onOptionsItemSelected(item);
+            }
 
             if(this.boilerObject == null)
             {

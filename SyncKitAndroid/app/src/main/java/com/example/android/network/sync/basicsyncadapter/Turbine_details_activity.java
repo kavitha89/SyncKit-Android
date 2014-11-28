@@ -1,6 +1,8 @@
 package com.example.android.network.sync.basicsyncadapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -75,6 +77,26 @@ public class Turbine_details_activity extends Activity {
         else if(id == R.id.menu_save_turbine_details)
         {
             //save button has been pressed. handle accordingly.
+
+            if(((TextView) findViewById(R.id.edit_turbine_name)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_turbine_location)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_turbine_capacity)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_turbine_temp)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_turbine_rotor_count)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_turbine_rotation_speed)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_turbine_RPM)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_turbine_health_statusr)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_turbine_oil_level)).getText().toString().length() <=0 || ((TextView) findViewById(R.id.edit_turbine_pressure)).getText().toString().length() <=0)
+            {
+                AlertDialog.Builder alert = new AlertDialog.Builder(
+                        this);
+                alert.setTitle("Alert!!");
+                alert.setMessage("Enter All Values");
+                alert.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+                    }
+                });
+
+                alert.show();
+
+                return super.onOptionsItemSelected(item);
+            }
 
             if(this.turbineObject == null)
             {
